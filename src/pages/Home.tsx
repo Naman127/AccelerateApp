@@ -9,9 +9,51 @@ import { FeatureCard } from '../components/FeatureCard';
 import { BUSINESS_FIELDS, BUSINESS_TYPES } from '../data/mockData';
 
 const FOUNDER_QUIZ = [
-  { id: 'budget', question: 'What is your starting budget?', options: [ { label: '$0 - $100', value: 'low' }, { label: '$100 - $1,000', value: 'med' }, { label: '$1,000+', value: 'high' } ] },
-  { id: 'time', question: 'How much time can you commit?', options: [ { label: 'Weekends Only', value: 'part' }, { label: '1-2 Hours/Day', value: 'med' }, { label: 'Full Time', value: 'full' } ] },
-  { id: 'skill', question: 'What is your superpower?', options: [ { label: 'Creativity / Design', value: 'creative' }, { label: 'Tech / Logic', value: 'tech' }, { label: 'Sales / People', value: 'social' } ] },
+  {
+    id: 'budget',
+    question: 'What is your initial capital allocation?',
+    options: [
+      { label: 'Bootstrapped ($0 - $500)', value: 'low' },
+      { label: 'Moderate ($500 - $2,000)', value: 'med' },
+      { label: 'Funded ($2,000+)', value: 'high' },
+    ],
+  },
+  {
+    id: 'time',
+    question: 'What is your weekly time availability?',
+    options: [
+      { label: 'Side Hustle (5-10 hours)', value: 'part' },
+      { label: 'Half-Time (10-20 hours)', value: 'med' },
+      { label: 'All In (30+ hours)', value: 'full' },
+    ],
+  },
+  {
+    id: 'skill',
+    question: 'Which core competency describes you best?',
+    options: [
+      { label: 'Engineering & Logic (Code, Systems)', value: 'tech' },
+      { label: 'Design & Creativity (Art, Brand)', value: 'creative' },
+      { label: 'People & Strategy (Sales, Marketing)', value: 'social' },
+    ],
+  },
+  {
+    id: 'goal',
+    question: 'What is your primary strategic objective?',
+    options: [
+      { label: 'Passive Income & Automation', value: 'passive' },
+      { label: 'High Growth & Scaling', value: 'scale' },
+      { label: 'Lifestyle & Independence', value: 'lifestyle' },
+    ],
+  },
+  {
+    id: 'risk',
+    question: 'What is your risk tolerance?',
+    options: [
+      { label: 'Low (Proven, steady models)', value: 'low' },
+      { label: 'Medium (Calculated risks)', value: 'med' },
+      { label: 'High (Disruptive moonshots)', value: 'high' },
+    ],
+  },
 ];
 
 export const Home = ({

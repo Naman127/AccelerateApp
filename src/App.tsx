@@ -1,73 +1,23 @@
-import React, { useState, useEffect, startTransition } from 'react';
+import React, { useState, startTransition } from 'react';
 import {
   Rocket,
-  Zap,
   Users,
   Calendar as CalendarIcon,
-  BookOpen,
   LayoutDashboard,
-  ArrowLeft,
-  Plus,
-  Search,
-  PlayCircle,
-  FileText,
-  Download,
-  MoreHorizontal,
-  Trash2,
-  Edit2,
   X,
-  Heart,
-  Share2,
   Check,
-  MessageCircle,
-  Trophy,
-  Award,
-  CheckCircle2,
-  Circle,
   User,
-  Camera,
-  Video,
-  Calculator,
-  Send,
-  ChevronDown,
-  ChevronUp,
-  Info,
-  DollarSign,
-  Book,
-  Banknote,
-  Wrench,
   Bell,
-  Flag,
-  Eye,
-  AlertTriangle,
   Clock,
   CalendarCheck,
-  Timer,
-  Bookmark,
-  Target,
-  Mail,
-  Briefcase,
-  Linkedin,
-  Globe as GlobeIcon,
-  Phone,
-  LogOut,
-  Sparkles,
-  BrainCircuit,
-  Loader2,
-  Medal,
-  Bot,
+  Medal
 } from 'lucide-react';
 
 // Gemini AI
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // 1. Import your UI Components
-import { CountUp } from './components/CountUp';
-import { TiltWrapper } from './components/TiltWrapper';
 import { Toast } from './components/Toast';
-import { RocketDashboard } from './components/RocketDashboard';
-import { HeroTitle } from './components/HeroTitle';
-import { FeatureCard } from './components/FeatureCard';
 import { Sidebar } from './components/Sidebar';
 import { Home } from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
@@ -82,11 +32,9 @@ import { LandingPage } from './pages/LandingPage';
 
 // 2. Import your Data
 import {
-  BUSINESS_FIELDS,
   BUSINESS_TYPES,
   AVAILABLE_MENTOR_SLOTS,
   BLUEPRINTS,
-  RESOURCES,
   INITIAL_COMMUNITIES,
   INITIAL_USERS,
   INITIAL_POSTS,
@@ -144,46 +92,24 @@ const FOUNDER_QUIZ = [
   },
 ];
 
-const QUIZ_LOGIC = {
-  low_creative: 'print_on_demand',
-  low_tech: 'nocode_agency',
-  low_social: 'short_form',
-  med_creative: 'clothing_brand',
-  med_tech: 'saas',
-  med_social: 'newsletter',
-  high_creative: 'art_studio',
-  high_tech: 'creative_ai',
-  high_social: 'event_planning',
-};
-
 // --- Main App Component ---
 
 export default function AccelerateApp() {
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
-  const [animatingTask, setAnimatingTask] = useState(null);
   const [activeTab, setActiveTab] = useState('home');
-  // NEW: Track whose profile we are viewing ('me' or a specific user ID)
   const [viewingUserId, setViewingUserId] = useState('me');
-  const [userLevel, setUserLevel] = useState('Beginner');
   const [selectedField, setSelectedField] = useState(null);
   const [expandedTask, setExpandedTask] = useState(null);
   const [toasts, setToasts] = useState([]);
   const [showDnaTooltip, setShowDnaTooltip] = useState(false);
 
-  //Mentor drop down
   const [expandedMentorId, setExpandedMentorId] = useState(null);
-
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedBlueprint, setGeneratedBlueprint] = useState(null);
 
-  // State for user's started businesses (START EMPTY)
   const [myBusinesses, setMyBusinesses] = useState([]);
-
-  // Saved Missions State
   const [savedMissions, setSavedMissions] = useState([]);
   const [expandedSavedMission, setExpandedSavedMission] = useState(null);
 
-  // Calendar State
   const [events, setEvents] = useState(INITIAL_EVENTS || []);
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
@@ -195,54 +121,30 @@ export default function AccelerateApp() {
     type: 'Meeting',
   });
 
-  // Community State
   const [communities, setCommunities] = useState(INITIAL_COMMUNITIES || []);
   const [communityUsers, setCommunityUsers] = useState(INITIAL_USERS || []);
   const [posts, setPosts] = useState(INITIAL_POSTS || []);
-  const [activeCommunityId, setActiveCommunityId] = useState('all'); // 'all' or specific ID
+  const [activeCommunityId, setActiveCommunityId] = useState('all');
 
-  // Profile State
   const [userProfile, setUserProfile] = useState(INITIAL_PROFILE || {});
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [tempProfile, setTempProfile] = useState(INITIAL_PROFILE || {});
 
-  // Mentor State
   const [mentors, setMentors] = useState(INITIAL_MENTORS || []);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-  const [selectedMentorForBooking, setSelectedMentorForBooking] =
-    useState(null);
+  const [selectedMentorForBooking, setSelectedMentorForBooking] = useState(null);
   const [bookingSlot, setBookingSlot] = useState(null);
 
-  // Weekly Challenge State
   const [challengeSteps, setChallengeSteps] = useState(WEEKLY_CHALLENGE.steps);
   const [isChallengeComplete, setIsChallengeComplete] = useState(false);
 
-  // Resource State
-
-  // Notification State
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      text: "You earned the 'First Launch' badge!",
-      time: '2m ago',
-      read: false,
-    },
-    {
-      id: 2,
-      text: 'Sarah Chen replied to your post.',
-      time: '1h ago',
-      read: false,
-    },
-    {
-      id: 3,
-      text: 'New resource added: Legal Templates',
-      time: '1d ago',
-      read: true,
-    },
+    { id: 1, text: "You earned the 'First Launch' badge!", time: '2m ago', read: false },
+    { id: 2, text: 'Sarah Chen replied to your post.', time: '1h ago', read: false },
+    { id: 3, text: 'New resource added: Legal Templates', time: '1d ago', read: true },
   ]);
 
-  // Founder DNA Quiz State
   const [isQuizOpen, setIsQuizOpen] = useState(false);
   const [quizStep, setQuizStep] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState({});
@@ -256,88 +158,29 @@ export default function AccelerateApp() {
     if (quizStep < FOUNDER_QUIZ.length - 1) {
       setQuizStep(quizStep + 1);
     } else {
-      // Create a flat list of all businesses
       const allTypes = Object.entries(BUSINESS_TYPES).flatMap(
         ([fieldId, businesses]) => businesses.map((b) => ({ ...b, fieldId }))
       );
 
-      // Score them dynamically based on user answers
       const scored = allTypes.map((biz) => {
-        let score = 50; // Base score
+        let score = 50; 
         const str = (biz.name + ' ' + biz.id).toLowerCase();
 
-        if (
-          newAnswers.budget === 'low' &&
-          (str.includes('freelance') ||
-            str.includes('newsletter') ||
-            str.includes('service') ||
-            str.includes('print'))
-        )
-          score += 20;
-        if (
-          newAnswers.budget === 'high' &&
-          (str.includes('saas') ||
-            str.includes('platform') ||
-            str.includes('app') ||
-            str.includes('ai'))
-        )
-          score += 20;
+        if (newAnswers.budget === 'low' && (str.includes('freelance') || str.includes('newsletter') || str.includes('service') || str.includes('print'))) score += 20;
+        if (newAnswers.budget === 'high' && (str.includes('saas') || str.includes('platform') || str.includes('app') || str.includes('ai'))) score += 20;
+        if (newAnswers.skill === 'tech' && (str.includes('app') || str.includes('saas') || str.includes('code') || str.includes('tech'))) score += 25;
+        if (newAnswers.skill === 'creative' && (str.includes('design') || str.includes('art') || str.includes('brand') || str.includes('clothing') || str.includes('content'))) score += 25;
+        if (newAnswers.skill === 'social' && (str.includes('agency') || str.includes('consulting') || str.includes('marketing') || str.includes('sales'))) score += 25;
+        if (newAnswers.time === 'part' && (str.includes('freelance') || str.includes('content') || str.includes('drop'))) score += 15;
+        if (newAnswers.goal === 'passive' && (str.includes('drop') || str.includes('print') || str.includes('course'))) score += 15;
+        if (newAnswers.goal === 'scale' && (str.includes('saas') || str.includes('ai') || str.includes('app'))) score += 15;
 
-        if (
-          newAnswers.skill === 'tech' &&
-          (str.includes('app') ||
-            str.includes('saas') ||
-            str.includes('code') ||
-            str.includes('tech'))
-        )
-          score += 25;
-        if (
-          newAnswers.skill === 'creative' &&
-          (str.includes('design') ||
-            str.includes('art') ||
-            str.includes('brand') ||
-            str.includes('clothing') ||
-            str.includes('content'))
-        )
-          score += 25;
-        if (
-          newAnswers.skill === 'social' &&
-          (str.includes('agency') ||
-            str.includes('consulting') ||
-            str.includes('marketing') ||
-            str.includes('sales'))
-        )
-          score += 25;
+        score += str.length % 5; 
 
-        if (
-          newAnswers.time === 'part' &&
-          (str.includes('freelance') ||
-            str.includes('content') ||
-            str.includes('drop'))
-        )
-          score += 15;
-        if (
-          newAnswers.goal === 'passive' &&
-          (str.includes('drop') ||
-            str.includes('print') ||
-            str.includes('course'))
-        )
-          score += 15;
-        if (
-          newAnswers.goal === 'scale' &&
-          (str.includes('saas') || str.includes('ai') || str.includes('app'))
-        )
-          score += 15;
-
-        score += str.length % 5; // Add slight tiebreaker variance
-
-        return { ...biz, matchScore: Math.min(score + 10, 99) }; // Clamp to 99% max
+        return { ...biz, matchScore: Math.min(score + 10, 99) }; 
       });
 
-      // Sort by highest score and take Top 3
-      const top3 = scored
-        .sort((a, b) => b.matchScore - a.matchScore)
-        .slice(0, 3);
+      const top3 = scored.sort((a, b) => b.matchScore - a.matchScore).slice(0, 3);
       setQuizResult(top3);
     }
   };
@@ -352,9 +195,6 @@ export default function AccelerateApp() {
   const [activeBusinessId, setActiveBusinessId] = useState(null);
   const activeBiz = myBusinesses.find((b) => b.id === activeBusinessId);
 
-  // --- Helpers ---
-
-  // Helper to format date as YYYY-MM-DD in LOCAL time, not UTC
   const formatLocalDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -367,7 +207,6 @@ export default function AccelerateApp() {
     setToasts([...toasts, { id, message, type }]);
   };
 
-  // Helper to get realistic avatars based on seed names
   const getAvatar = (seed) => {
     if (seed && seed.startsWith('http')) return seed;
     const avatarMap = {
@@ -383,7 +222,7 @@ export default function AccelerateApp() {
       Liam: 'photo-1500917293891-ef795e70e1f6',
       Sophia: 'photo-1524504388940-b1a1728306b0',
       Noah: 'photo-1504257432389-52343af06ae3',
-      Felix: 'photo-1599566150163-29194dcaad36', // Default User
+      Felix: 'photo-1599566150163-29194dcaad36', 
       Olivia: 'photo-1580489944761-15a19d654956',
       Ethan: 'photo-1522075469751-3a6694fb2f61',
       Isabella: 'photo-1544005313-94ddf0286df2',
@@ -402,8 +241,11 @@ export default function AccelerateApp() {
   };
 
   const handleNav = (tabId) => {
-    // This tells React: "Keep the UI responsive while you load the new page!"
     startTransition(() => {
+      if (tabId === 'profile') {
+        setViewingUserId('me');
+      }
+      
       setActiveTab(tabId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
@@ -420,7 +262,6 @@ export default function AccelerateApp() {
     }
   };
 
-  // --- AI Logic ---
   const handleGenerateBlueprint = async (promptText) => {
     if (!promptText || !promptText.trim()) return;
 
@@ -524,8 +365,6 @@ export default function AccelerateApp() {
     }
   };
 
-  // --- Business Logic ---
-
   const handleStartBusiness = (typeId, fieldId, name) => {
     const newBiz = {
       id: `biz_${Date.now()}`,
@@ -566,9 +405,6 @@ export default function AccelerateApp() {
 
   const toggleTask = (taskName) => {
     if (!activeBiz) return;
-    // Trigger animation
-    setAnimatingTask(taskName);
-    setTimeout(() => setAnimatingTask(null), 300); // Reset after 300ms
 
     const isCompleted = activeBiz.completedTasks.includes(taskName);
     let newCompleted = [];
@@ -596,8 +432,6 @@ export default function AccelerateApp() {
       myBusinesses.map((b) => (b.id === activeBiz.id ? updatedBiz : b))
     );
   };
-
-  // --- Calendar Logic ---
 
   const getDaysInMonth = (year, month) => {
     const date = new Date(year, month, 1);
@@ -690,8 +524,6 @@ export default function AccelerateApp() {
     addToast('Event updated successfully', 'success');
   };
 
-  // --- Mentor Logic ---
-
   const openBookingModal = (mentor) => {
     setSelectedMentorForBooking(mentor);
     setIsBookingModalOpen(true);
@@ -724,8 +556,6 @@ export default function AccelerateApp() {
       'success'
     );
   };
-
-  // --- Community Logic ---
 
   const toggleLikePost = (id) => {
     setPosts(
@@ -776,7 +606,6 @@ export default function AccelerateApp() {
   };
 
   const handleDropdownAction = (action, postId) => {
-    // Remove setActiveDropdown(null) from here, Community.tsx handles it now
     if (action === 'report') addToast('Post flagged for review.', 'info');
     if (action === 'mute') addToast('User muted.', 'info');
     if (action === 'delete') {
@@ -824,7 +653,6 @@ export default function AccelerateApp() {
           : c
       )
     );
-    // If we leave the active community, reset to 'all'
     if (activeCommunityId === id) {
       setActiveCommunityId('all');
     }
@@ -834,21 +662,6 @@ export default function AccelerateApp() {
       'success'
     );
   };
-
-  const toggleFollowUser = (id) => {
-    setCommunityUsers(
-      communityUsers.map((u) =>
-        u.id === id ? { ...u, followed: !u.followed } : u
-      )
-    );
-    const user = communityUsers.find((u) => u.id === id);
-    addToast(
-      user.followed ? `Unfollowed ${user.name}` : `Following ${user.name}`,
-      'success'
-    );
-  };
-
-  // --- Profile Logic ---
 
   const startEditingProfile = () => {
     setTempProfile({ ...userProfile });
@@ -870,14 +683,10 @@ export default function AccelerateApp() {
     }
   };
 
-  // --- Resource Logic ---
-
   const handleMarkNotificationsRead = () => {
     setNotifications(notifications.map((n) => ({ ...n, read: true })));
     addToast('All notifications marked as read', 'success');
   };
-
-  // --- Getters ---
 
   const getAuthor = (id) => {
     if (id === 'me') {
@@ -899,22 +708,18 @@ export default function AccelerateApp() {
 
   const getCommunity = (id) => communities.find((c) => c.id === id);
 
-  // --- UPDATED POST FILTERING: Removed Tab Logic ---
   const getFilteredPosts = () => {
     let filtered = [...posts];
-
-    // Only filter by specific community if one is selected
     if (activeCommunityId !== 'all') {
       filtered = filtered.filter((p) => p.communityId === activeCommunityId);
     }
-
     return filtered;
   };
 
   const filteredPosts = getFilteredPosts();
+
   return (
     <div className="min-h-screen font-sans text-slate-900 flex relative overflow-hidden bg-[#FDFCF6]">
-      {/* STRICTLY POSITIONED AURORA BLOBS */}
       <style>{`
         @keyframes float-y {
           0%, 100% { transform: translateY(0px) scale(1); }
@@ -925,7 +730,6 @@ export default function AccelerateApp() {
           50% { transform: translateY(80px) scale(1.05); }
         }
       `}</style>
-      {/* Ambient Background Blobs - Optimized */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div
           className="absolute w-[60%] h-[60%] rounded-full blur-3xl opacity-[0.15] animate-blob"
@@ -965,7 +769,6 @@ export default function AccelerateApp() {
         ></div>
       </div>
 
-      {/* Notifications */}
       {toasts.map((toast) => (
         <Toast
           key={toast.id}
@@ -975,21 +778,17 @@ export default function AccelerateApp() {
         />
       ))}
 
-      {/* GATEKEEPER: Show Landing Page OR App Workspace */}
       {!hasEnteredApp ? (
         <LandingPage onEnter={() => setHasEnteredApp(true)} />
       ) : (
         <>
-          {/* Sidebar */}
           <Sidebar
             activeTab={activeTab}
             setActiveTab={handleNav}
             onReturnHome={() => setHasEnteredApp(false)}
           />
 
-          {/* Main Content */}
           <main className="flex-1 md:ml-64 min-h-screen relative z-10">
-            {/* Header */}
             <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
               <h1 className="text-xl font-bold text-slate-800 capitalize font-display">
                 {activeTab === 'home'
@@ -1079,7 +878,6 @@ export default function AccelerateApp() {
               </div>
             </header>
 
-            {/* Dynamic Content Router */}
             <div className="p-6">
               <div key={activeTab} className="animate-enter">
                 {activeTab === 'home' && (
@@ -1203,14 +1001,11 @@ export default function AccelerateApp() {
             </div>
           </main>
 
-          {/* Mobile Nav Overlay */}
           <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-white/50 p-2 flex justify-around z-30">
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`p-3 rounded-xl ${
-                activeTab === 'dashboard'
-                  ? 'text-indigo-600 bg-indigo-50/50'
-                  : 'text-slate-400'
+                activeTab === 'dashboard' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
               }`}
             >
               <LayoutDashboard size={24} />
@@ -1218,9 +1013,7 @@ export default function AccelerateApp() {
             <button
               onClick={() => setActiveTab('community')}
               className={`p-3 rounded-xl ${
-                activeTab === 'community'
-                  ? 'text-indigo-600 bg-indigo-50/50'
-                  : 'text-slate-400'
+                activeTab === 'community' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
               }`}
             >
               <Users size={24} />
@@ -1228,9 +1021,7 @@ export default function AccelerateApp() {
             <button
               onClick={() => setActiveTab('home')}
               className={`p-3 rounded-xl ${
-                activeTab === 'home'
-                  ? 'text-indigo-600 bg-indigo-50/50'
-                  : 'text-slate-400'
+                activeTab === 'home' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
               }`}
             >
               <Rocket size={24} />
@@ -1238,9 +1029,7 @@ export default function AccelerateApp() {
             <button
               onClick={() => setActiveTab('calendar')}
               className={`p-3 rounded-xl ${
-                activeTab === 'calendar'
-                  ? 'text-indigo-600 bg-indigo-50/50'
-                  : 'text-slate-400'
+                activeTab === 'calendar' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
               }`}
             >
               <CalendarIcon size={24} />
@@ -1248,16 +1037,13 @@ export default function AccelerateApp() {
             <button
               onClick={() => handleNav('profile')}
               className={`p-3 rounded-xl ${
-                activeTab === 'profile'
-                  ? 'text-indigo-600 bg-indigo-50/50'
-                  : 'text-slate-400'
+                activeTab === 'profile' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
               }`}
             >
               <User size={24} />
             </button>
           </div>
 
-          {/* Booking Modal (Shared globally) */}
           {isBookingModalOpen && selectedMentorForBooking && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in zoom-in">
               <div className="bg-white/90 backdrop-blur-xl rounded-2xl w-full max-w-lg shadow-2xl p-6 relative border border-white/50">
@@ -1271,8 +1057,7 @@ export default function AccelerateApp() {
                   Book Session with {selectedMentorForBooking.name}
                 </h2>
                 <p className="text-slate-500 text-sm mb-6 font-body">
-                  {selectedMentorForBooking.role} •{' '}
-                  {selectedMentorForBooking.expertise}
+                  {selectedMentorForBooking.role} • {selectedMentorForBooking.expertise}
                 </p>
                 <div className="space-y-4 mb-8">
                   <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider font-body">
@@ -1293,28 +1078,20 @@ export default function AccelerateApp() {
                           <div className="flex flex-col">
                             <span
                               className={`font-bold text-sm mb-1 ${
-                                bookingSlot === slot
-                                  ? 'text-white'
-                                  : 'text-slate-900'
+                                bookingSlot === slot ? 'text-white' : 'text-slate-900'
                               }`}
                             >
                               <span className="flex items-center gap-2">
                                 <CalendarCheck
                                   size={14}
-                                  className={
-                                    bookingSlot === slot
-                                      ? 'text-indigo-200'
-                                      : 'text-indigo-600'
-                                  }
+                                  className={bookingSlot === slot ? 'text-indigo-200' : 'text-indigo-600'}
                                 />{' '}
                                 {slot.date}
                               </span>
                             </span>
                             <span
                               className={`flex items-center gap-2 text-xs ${
-                                bookingSlot === slot
-                                  ? 'text-indigo-100'
-                                  : 'text-slate-500'
+                                bookingSlot === slot ? 'text-indigo-100' : 'text-slate-500'
                               }`}
                             >
                               <Clock size={12} /> {slot.time}
