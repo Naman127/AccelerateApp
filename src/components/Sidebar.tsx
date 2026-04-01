@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Rocket, LayoutDashboard, Users, BookOpen, 
-  Calendar as CalendarIcon, Briefcase, Info, Bookmark 
+  Calendar as CalendarIcon, Briefcase, Info, Bookmark, Settings as SettingsIcon,
 } from 'lucide-react';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
@@ -46,6 +46,7 @@ export const Sidebar = ({ activeTab, setActiveTab, onReturnHome }) => {
       </nav>
 
       <div className="border-t border-slate-200/50 pt-4 mt-auto space-y-1">
+        <SidebarItem icon={SettingsIcon} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
         <SidebarItem icon={Info} label="About Us" active={activeTab === 'about'} onClick={() => setActiveTab('about')} />
       </div>
     </aside>

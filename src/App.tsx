@@ -1,4 +1,5 @@
 import React, { useState, startTransition } from 'react';
+import { Settings } from './pages/Settings';
 import {
   Rocket,
   Users,
@@ -95,6 +96,11 @@ const FOUNDER_QUIZ = [
 // --- Main App Component ---
 
 export default function AccelerateApp() {
+  const [accessibility, setAccessibility] = useState({
+    highContrast: false,
+    reduceMotion: false,
+    dyslexicFont: false
+  });
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [viewingUserId, setViewingUserId] = useState('me');
@@ -719,7 +725,11 @@ export default function AccelerateApp() {
   const filteredPosts = getFilteredPosts();
 
   return (
-    <div className="min-h-screen font-sans text-slate-900 flex relative overflow-hidden bg-[#FDFCF6]">
+    <div className={`min-h-screen text-slate-900 flex relative overflow-hidden bg-[#FDFCF6] transition-all duration-500
+      ${accessibility.highContrast ? 'contrast-125 saturate-150' : ''} 
+      ${accessibility.reduceMotion ? '[&_*]:!transition-none [&_*]:!animate-none' : ''}
+      ${accessibility.dyslexicFont ? 'font-serif tracking-wide' : 'font-sans'}
+    `}>
       <style>{`
         @keyframes float-y {
           0%, 100% { transform: translateY(0px) scale(1); }
@@ -994,6 +1004,13 @@ export default function AccelerateApp() {
                     expandedMentorId={expandedMentorId}
                     setExpandedMentorId={setExpandedMentorId}
                     openBookingModal={openBookingModal}
+                  />
+                )}
+                {activeTab === 'settings' && (
+                  <Settings 
+                    accessibility={accessibility} 
+                    setAccessibility={setAccessibility} 
+                    addToast={addToast} 
                   />
                 )}
                 {activeTab === 'about' && <About />}
