@@ -116,10 +116,16 @@ export default function AccelerateApp() {
   const [savedMissions, setSavedMissions] = useState([]);
   const [expandedSavedMission, setExpandedSavedMission] = useState(null);
 
-  const [events, setEvents] = useState(INITIAL_EVENTS || []);
+  const [events, setEvents] = useState([
+    { id: 101, title: 'Workshop: Scaling with AI', date: '2026-04-11', time: '7:00 PM', type: 'Workshop' },
+    { id: 102, title: 'Expert Session: LLC vs Corp', date: '2026-04-13', time: '5:30 PM', type: 'Expert Session' },
+    { id: 103, title: 'Networking: Young Founders Mixer', date: '2026-04-14', time: '6:00 PM', type: 'Networking' },
+    { id: 104, title: 'Deadline: Pitch Deck Review', date: '2026-04-22', time: '11:59 PM', type: 'Deadline' },
+    { id: 105, title: 'Study Group: Marketing 101', date: '2026-04-28', time: '3:00 PM', type: 'Learning' }
+  ]);
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 1, 1));
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1));
   const [newEventForm, setNewEventForm] = useState({
     title: '',
     time: '',
