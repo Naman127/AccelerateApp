@@ -467,12 +467,12 @@ const AppMockup = () => (
 
 const TYPING_WORDS = [
   'SaaS Startup.',
-  'Fashion Business',
+  'Fashion Business.',
   'Creative Agency.',
-  'Event Catering Service',
-  'Non-Profit',
-  'Personal Brand',
-  'Your Ambition'
+  'Event Catering Service.',
+  'Non-Profit.',
+  'Personal Brand.',
+  'Your Ambition.'
 ];
 
 // --- NEW ISOLATED COMPONENT ---
