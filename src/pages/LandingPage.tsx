@@ -1070,7 +1070,7 @@ export const LandingPage = ({ onEnter }) => {
 
       {/* Footer */}
       <footer className="text-center py-10 text-slate-500 font-body text-sm border-t border-slate-200/50 bg-white/30 backdrop-blur-md relative z-10">
-        <p className="font-bold">Built by Naman</p>
+        <p className="font-bold">Built by Naman M, Shifa B, Arnav T</p>
       </footer>
     </div>
   );
