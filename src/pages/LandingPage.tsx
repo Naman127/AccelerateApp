@@ -339,7 +339,7 @@ const EXPANDED_DATA = {
 
 // --- COMPONENTS ---
 
-// OPTIMIZED: Removed mouse tracking state, backdrop-blur, and changed transition-all to transition
+// OPTIMIZED: Hardware Acceleration Enabled
 const PuzzlePiece = ({
   id,
   className,
@@ -355,14 +355,16 @@ const PuzzlePiece = ({
 }) => {
   const style = isVisible
     ? {
-        transform: 'translate(0px, 0px) rotate(0deg) scale(1)',
+        transform: 'translate3d(0px, 0px, 0px) rotate(0deg) scale(1)',
         opacity: 1,
         transitionDelay: delay,
+        willChange: 'transform, opacity'
       }
     : {
-        transform: `translate(${tx}px, ${ty}px) rotate(${rot}deg) scale(0.8)`,
+        transform: `translate3d(${tx}px, ${ty}px, 0px) rotate(${rot}deg) scale(0.8)`,
         opacity: 0,
         transitionDelay: '0s',
+        willChange: 'transform, opacity'
       };
 
   return (
@@ -531,7 +533,7 @@ export const LandingPage = ({ onEnter }) => {
       {/* --- CLEAN HERO SECTION --- */}
       <div
         ref={heroRef}
-        className={`max-w-[100rem] mx-auto px-6 sm:px-16 lg:px-24 pt-20 pb-16 min-h-[95vh] flex flex-col justify-center relative transition-all duration-1000 z-10 ${
+        className={`max-w-[100rem] mx-auto px-6 sm:px-16 lg:pl-12 lg:pr-24 pt-20 pb-16 min-h-[95vh] flex flex-col justify-center relative transition-all duration-1000 z-10 ${
           isHeroVisible ? 'opacity-100 blur-none' : 'opacity-0 blur-lg'
         } ${expandedId ? 'opacity-20 blur-xl pointer-events-none' : ''}`}
       >
@@ -542,7 +544,7 @@ export const LandingPage = ({ onEnter }) => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-indigo-500/20 via-purple-500/20 to-cyan-500/20 rounded-full blur-[120px] -z-10"></div>
         </div>
 
-        <div className="relative z-10 max-w-3xl pl-4 md:pl-8">
+        <div className="relative z-10 max-w-3xl">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-white/80 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-8 shadow-sm backdrop-blur-md">
             <Sparkles size={14} className="text-indigo-500" /> Accelerate Your
             Future
@@ -593,7 +595,7 @@ export const LandingPage = ({ onEnter }) => {
             <div
               className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 shadow-sm ${activeData.bg} ${activeData.color}`}
             >
-              <activeData.icon size={32} />
+              {React.createElement(activeData.icon, { size: 32 })}
             </div>
             <h2 className="text-4xl font-black text-slate-900 font-display tracking-tight mb-4">
               {activeData.title}

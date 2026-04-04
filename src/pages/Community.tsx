@@ -1,8 +1,9 @@
 // src/pages/Community.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Users, LogOut, Plus, Trophy, Clock, Check, Heart, MessageCircle, 
-  Share2, MoreHorizontal, Flag, Eye, Trash2, Send, X
+  Share2, MoreHorizontal, Flag, Eye, Trash2, Send, X, AlertCircle
 } from 'lucide-react';
 import { WEEKLY_CHALLENGE } from '../data/mockData';
 
@@ -25,16 +26,68 @@ export const Community = ({
   handleSharePost,
   handleCreatePost
 }) => {
-  // LOCAL STATE - Typing here no longer lags the whole app!
+  // LOCAL STATE
   const [newPostContent, setNewPostContent] = useState('');
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [activeCommentId, setActiveCommentId] = useState(null);
   const [commentText, setCommentText] = useState('');
+  
+  const [selectedCommunitiesForPost, setSelectedCommunitiesForPost] = useState([]);
+  const [postError, setPostError] = useState('');
+
+  const isChallengeDone = challengeSteps.every(step => step.done);
+
+  // NEW: Lock background scrolling when a modal is open
+  useEffect(() => {
+    if (isPostModalOpen || showWarning) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    // Cleanup function in case component unmounts
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [isPostModalOpen, showWarning]);
+
+  const handleNewPostClick = () => {
+    if (activeCommunityId === 'all') {
+      setShowWarning(true);
+    } else {
+      openPostModal();
+    }
+  };
+
+  const openPostModal = () => {
+    setSelectedCommunitiesForPost(activeCommunityId === 'all' ? [] : [activeCommunityId]);
+    setPostError('');
+    setIsPostModalOpen(true);
+  };
+
+  const toggleCommunityForPost = (commId) => {
+    if (selectedCommunitiesForPost.includes(commId)) {
+      setSelectedCommunitiesForPost(prev => prev.filter(id => id !== commId));
+    } else {
+      setSelectedCommunitiesForPost(prev => [...prev, commId]);
+    }
+    setPostError(''); 
+  };
 
   const submitPost = () => {
-    handleCreatePost(newPostContent, activeCommunityId);
+    if (selectedCommunitiesForPost.length === 0) {
+      setPostError('Please select at least one community before posting.');
+      return;
+    }
+    if (!newPostContent.trim()) {
+      setPostError('Your post cannot be empty.');
+      return;
+    }
+
+    // FIX: Pass the entire array of communities at once instead of looping!
+    handleCreatePost(newPostContent, selectedCommunitiesForPost);
+
     setNewPostContent('');
+    setSelectedCommunitiesForPost([]);
     setIsPostModalOpen(false);
   };
 
@@ -98,40 +151,44 @@ export const Community = ({
 
       {/* Center Feed */}
       <div className="lg:col-span-9">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-6 max-w-3xl">
           <h2 className="text-2xl font-bold text-slate-900 font-display">Community Feed</h2>
-          <button onClick={() => setIsPostModalOpen(true)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-lg shadow-indigo-100 font-body text-sm transition-all hover:-translate-y-0.5">
+          
+          <button onClick={handleNewPostClick} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow-lg shadow-indigo-100 font-body text-sm transition-all hover:-translate-y-0.5">
             <Plus size={16} /> New Post
           </button>
         </div>
 
-        {/* Weekly Challenge Banner*/}
-        <div className="bg-gradient-to-r from-amber-600 to-orange-700 rounded-2xl p-6 text-white mb-8 shadow-xl shadow-orange-700/20 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-1/4 -translate-y-1/4 transition-transform group-hover:scale-110 duration-700"><Trophy size={140} /></div>
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="bg-white/20 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider backdrop-blur-sm border border-white/10">Weekly Challenge</span>
-              <span className="text-amber-100 text-xs flex items-center gap-1 font-bold animate-pulse"><Clock size={12} /> {WEEKLY_CHALLENGE.deadline}</span>
-            </div>
-            <h3 className="text-2xl font-bold mb-2 font-display">{WEEKLY_CHALLENGE.title}</h3>
-            <p className="text-amber-50 mb-6 max-w-xl text-sm font-body leading-relaxed">{WEEKLY_CHALLENGE.description}</p>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 max-w-lg">
-              <h4 className="text-xs font-bold uppercase tracking-wider mb-3 text-amber-200">Your Progress</h4>
-              <div className="space-y-3">
-                {challengeSteps.map((step) => (
-                  <button key={step.id} onClick={() => toggleChallengeStep(step.id)} className="flex items-center gap-3 w-full text-left group/step">
-                    <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${step.done ? 'bg-white border-white text-orange-600 scale-110' : 'border-white/40 group-hover/step:border-white/60'}`}>
-                      {step.done && <Check size={12} strokeWidth={3} />}
-                    </div>
-                    <span className={`text-sm transition-opacity ${step.done ? 'text-white line-through opacity-60' : 'text-white'}`}>{step.text}</span>
-                  </button>
-                ))}
+        {/* Weekly Challenge Banner */}
+        {!isChallengeDone && (
+          <div className="bg-gradient-to-r from-amber-600 to-orange-700 rounded-2xl p-6 text-white mb-8 shadow-xl shadow-orange-700/20 relative overflow-hidden group max-w-3xl animate-in fade-in slide-in-from-top-4">
+            <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-1/4 -translate-y-1/4 transition-transform group-hover:scale-110 duration-700"><Trophy size={140} /></div>
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-white/20 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider backdrop-blur-sm border border-white/10">Weekly Challenge</span>
+                <span className="text-amber-100 text-xs flex items-center gap-1 font-bold animate-pulse"><Clock size={12} /> {WEEKLY_CHALLENGE.deadline}</span>
+              </div>
+              <h3 className="text-2xl font-bold mb-2 font-display">{WEEKLY_CHALLENGE.title}</h3>
+              <p className="text-amber-50 mb-6 max-w-xl text-sm font-body leading-relaxed">{WEEKLY_CHALLENGE.description}</p>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 max-w-lg">
+                <h4 className="text-xs font-bold uppercase tracking-wider mb-3 text-amber-200">Your Progress</h4>
+                <div className="space-y-3">
+                  {challengeSteps.map((step) => (
+                    <button key={step.id} onClick={() => toggleChallengeStep(step.id)} className="flex items-center gap-3 w-full text-left group/step">
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${step.done ? 'bg-white border-white text-orange-600 scale-110' : 'border-white/40 group-hover/step:border-white/60'}`}>
+                        {step.done && <Check size={12} strokeWidth={3} />}
+                      </div>
+                      <span className={`text-sm transition-opacity ${step.done ? 'text-white line-through opacity-60' : 'text-white'}`}>{step.text}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="space-y-6">
+        {/* Posts Container */}
+        <div className="space-y-6 max-w-3xl">
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post) => {
               const author = getAuthor(post.authorId);
@@ -218,7 +275,7 @@ export const Community = ({
               );
             })
           ) : (
-            <div className="text-center py-12 bg-white/60 backdrop-blur-xl rounded-xl border border-dashed border-slate-300">
+            <div className="text-center py-12 bg-white/60 backdrop-blur-xl rounded-xl border border-dashed border-slate-300 max-w-3xl">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300"><Users size={32} /></div>
               <h3 className="text-lg font-bold text-slate-700 mb-2 font-display">No posts yet</h3>
               <p className="text-slate-500 text-sm mb-4 font-body">Be the first to share something with the community!</p>
@@ -227,12 +284,68 @@ export const Community = ({
         </div>
       </div>
 
-      {isPostModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in zoom-in">
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl p-6 relative">
+      {/* --- WARNING MODAL: NO COMMUNITY SELECTED (PORTALED) --- */}
+      {showWarning && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in zoom-in">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-8 relative text-center border border-white/20">
+            <button onClick={() => setShowWarning(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><X size={20} /></button>
+            <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 text-amber-600">
+              <AlertCircle size={32} />
+            </div>
+            <h3 className="text-xl font-bold mb-2 font-display text-slate-900">Select a Community</h3>
+            <p className="text-slate-500 font-body mb-6 text-sm">Please select a specific community from the sidebar (like "Technology" or "E-Commerce") before creating a post!</p>
+            <button onClick={() => setShowWarning(false)} className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors font-body w-full shadow-md">Got it</button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* --- NEW POST MODAL WITH MULTI-SELECT (PORTALED) --- */}
+      {isPostModalOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in zoom-in">
+          <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl p-6 relative flex flex-col max-h-[90vh]">
             <button onClick={() => setIsPostModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"><X size={20} /></button>
             <h3 className="text-xl font-bold mb-4 font-display">Create New Post</h3>
-            <textarea value={newPostContent} onChange={(e) => setNewPostContent(e.target.value)} placeholder="What's on your mind?" className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:ring-2 focus:ring-indigo-500 focus:outline-none font-body"></textarea>
+            
+            <div className="mb-4">
+              <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wide font-body">Post to Communities:</label>
+              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto custom-scrollbar p-1">
+                {communities.filter(c => c.joined).map(c => {
+                  const isSelected = selectedCommunitiesForPost.includes(c.id);
+                  return (
+                    <button
+                      key={c.id}
+                      onClick={() => toggleCommunityForPost(c.id)}
+                      className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all border flex items-center gap-2 font-body ${
+                        isSelected
+                          ? 'bg-indigo-50 border-indigo-300 text-indigo-700 shadow-sm'
+                          : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
+                      }`}
+                    >
+                      <span className={`w-2.5 h-2.5 rounded-full ${c.color.split(' ')[1]}`}></span>
+                      {c.name}
+                      {isSelected && <Check size={14} strokeWidth={3} className="text-indigo-600" />}
+                    </button>
+                  );
+                })}
+                {communities.filter(c => c.joined).length === 0 && (
+                  <p className="text-sm text-slate-500 italic">You must join a community first.</p>
+                )}
+              </div>
+              {postError && (
+                <p className="text-red-500 text-xs mt-2 flex items-center gap-1 font-medium font-body animate-in slide-in-from-top-1">
+                  <AlertCircle size={14}/> {postError}
+                </p>
+              )}
+            </div>
+
+            <textarea 
+              value={newPostContent} 
+              onChange={(e) => { setNewPostContent(e.target.value); setPostError(''); }} 
+              placeholder="What's on your mind?" 
+              className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl resize-none focus:ring-2 focus:ring-indigo-500 focus:outline-none font-body"
+            ></textarea>
+            
             <div className="flex justify-between items-center mt-4">
               <div className="flex gap-2">
                 {['General', 'Question', 'Milestone'].map((tag) => <span key={tag} className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded cursor-pointer hover:bg-slate-200">#{tag}</span>)}
@@ -240,7 +353,8 @@ export const Community = ({
               <button onClick={submitPost} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 transition-colors font-body">Post</button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

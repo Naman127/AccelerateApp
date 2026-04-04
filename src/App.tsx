@@ -215,8 +215,8 @@ export default function AccelerateApp() {
   };
 
   const addToast = (message, type = 'info') => {
-    const id = Date.now();
-    setToasts([...toasts, { id, message, type }]);
+    const id = `toast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    setToasts(prevToasts => [...prevToasts, { id, message, type }]);
   };
 
   const getAvatar = (seed) => {
@@ -583,21 +583,30 @@ export default function AccelerateApp() {
     );
   };
 
-  const handleCreatePost = (content, communityId) => {
+  const handleCreatePost = (content, communityIds) => {
     if (!content.trim()) return;
-    const newPost = {
-      id: `p_${Date.now()}`,
+
+    // Normalize to an array (handles both the new multi-select and any old single-select code)
+    const ids = Array.isArray(communityIds) ? communityIds : [communityIds === 'all' ? 'c1' : communityIds];
+
+    // Map through the array to create a distinct post object for each community
+    const newPosts = ids.map(commId => ({
+      id: `p_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       authorId: 'me',
-      communityId: communityId === 'all' ? 'c1' : communityId,
+      communityId: commId,
       content: content,
       tags: ['General'],
       likes: 0,
       comments: [],
       liked: false,
       timestamp: 'Just now',
-    };
-    setPosts([newPost, ...posts]);
-    addToast('Post published to feed', 'success');
+    }));
+
+    // Do ONE safe state update with all the new posts at the same time
+    setPosts(prevPosts => [...newPosts, ...prevPosts]);
+    
+    // Dynamic toast message based on how many communities they selected
+    addToast(`Successfully published to ${ids.length} communit${ids.length === 1 ? 'y' : 'ies'}!`, 'success');
   };
 
   const handleAddComment = (postId, text) => {
