@@ -1,9 +1,9 @@
 // src/pages/Community.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Users, LogOut, Plus, Trophy, Clock, Check, Heart, MessageCircle, 
-  Share2, MoreHorizontal, Flag, Eye, Trash2, Send, X, AlertCircle
+  Share2, MoreHorizontal, Flag, Eye, Trash2, Send, X, AlertCircle, Sparkles
 } from 'lucide-react';
 import { WEEKLY_CHALLENGE } from '../data/mockData';
 
@@ -37,16 +37,37 @@ export const Community = ({
   const [selectedCommunitiesForPost, setSelectedCommunitiesForPost] = useState([]);
   const [postError, setPostError] = useState('');
 
+  // --- IDEA 3 ANIMATION STATE (SWEEP -> RIPPLE -> FINISHED) ---
   const isChallengeDone = challengeSteps.every(step => step.done);
+  const prevChallengeDone = useRef(isChallengeDone);
+  const [animationPhase, setAnimationPhase] = useState('idle');
 
-  // NEW: Lock background scrolling when a modal is open
+  // React to challenge completion with synchronized timings
+  useEffect(() => {
+    if (!prevChallengeDone.current && isChallengeDone) {
+      // Step 1: Start the 0.5s Scanner Sweep & flip the theme to Green
+      setAnimationPhase('sweeping');
+      
+      // Step 2: Exactly 500ms later, the sweep ends and the ripple begins
+      setTimeout(() => {
+        setAnimationPhase('rippling');
+      }, 500);
+
+      // Step 3: 1 second after the ripple starts, collapse the banner entirely
+      setTimeout(() => {
+        setAnimationPhase('finished');
+      }, 1500); 
+    }
+    prevChallengeDone.current = isChallengeDone;
+  }, [isChallengeDone]);
+
+  // Lock background scrolling when a modal is open
   useEffect(() => {
     if (isPostModalOpen || showWarning) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-    // Cleanup function in case component unmounts
     return () => { document.body.style.overflow = 'auto'; };
   }, [isPostModalOpen, showWarning]);
 
@@ -82,10 +103,7 @@ export const Community = ({
       setPostError('Your post cannot be empty.');
       return;
     }
-
-    // FIX: Pass the entire array of communities at once instead of looping!
     handleCreatePost(newPostContent, selectedCommunitiesForPost);
-
     setNewPostContent('');
     setSelectedCommunitiesForPost([]);
     setIsPostModalOpen(false);
@@ -104,26 +122,77 @@ export const Community = ({
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-      {/* Left Sidebar: My Communities */}
+      
+      {/* --- REFINED IDEA 3 CSS ANIMATIONS --- */}
+      <style>{`
+        /* The 0-100% Scanner Light Beam */
+        @keyframes scannerSweep {
+          0% { left: 0%; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          100% { left: 100%; opacity: 0; }
+        }
+        
+        /* The Expanding Radial Blur */
+        @keyframes rippleBlurOut {
+          0% { transform: scale(0.5); opacity: 1; filter: blur(0px); }
+          100% { transform: scale(2); opacity: 0; filter: blur(15px); }
+        }
+
+        /* Fade out the text behind the ripple */
+        @keyframes fadeTextOut {
+          0% { opacity: 1; filter: blur(0px); }
+          100% { opacity: 0; filter: blur(8px); }
+        }
+
+        .animate-scanner-beam {
+          position: absolute;
+          top: 0; bottom: 0;
+          width: 150px;
+          margin-left: -75px; /* Centers the beam on the left edge */
+          transform: skewX(-20deg);
+          background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.9), transparent);
+          /* Tuned exactly to 0.5s */
+          animation: scannerSweep 0.5s ease-in-out forwards;
+          z-index: 50;
+          pointer-events: none;
+        }
+
+        .animate-ripple-blur {
+          position: absolute;
+          top: 50%; left: 50%;
+          width: 150%; aspect-ratio: 1 / 1;
+          margin-top: -75%; margin-left: -75%;
+          background: radial-gradient(circle, rgba(255,255,255,0.4) 0%, rgba(52, 211, 153, 0.2) 40%, transparent 70%);
+          border-radius: 50%;
+          animation: rippleBlurOut 1s ease-out forwards;
+          z-index: 40;
+          pointer-events: none;
+        }
+
+        .fade-behind-ripple {
+          animation: fadeTextOut 0.8s ease-out forwards;
+        }
+      `}</style>
+      
+      {/* --- LEFT SIDEBAR --- */}
       <div className="hidden lg:block lg:col-span-3 space-y-6">
         <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm max-h-[50vh] flex flex-col">
           <h3 className="text-slate-900 font-bold mb-4 flex items-center gap-2 font-display flex-shrink-0">
             <Users size={18} className="text-indigo-600" /> My Communities
           </h3>
           <div className="space-y-1 overflow-y-auto pr-2 custom-scrollbar">
-            {communities
-              .filter((c) => c.joined)
-              .map((c) => (
-                <div key={c.id} className="group flex items-center justify-between w-full rounded-lg hover:bg-white/50 transition-colors pr-2">
-                  <button onClick={() => setActiveCommunityId(c.id)} className={`flex-1 text-left px-3 py-2 text-sm font-medium flex items-center gap-2 font-body ${activeCommunityId === c.id ? 'bg-indigo-50 text-indigo-700 rounded-lg' : 'text-slate-600'}`}>
-                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${c.color.split(' ')[1]}`}></span>
-                    <span className="truncate">{c.name}</span>
-                  </button>
-                  <button onClick={(e) => { e.stopPropagation(); toggleJoinCommunity(c.id); }} className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 p-1 transition-all" title="Leave Community">
-                    <LogOut size={14} />
-                  </button>
-                </div>
-              ))}
+            {communities.filter((c) => c.joined).map((c) => (
+              <div key={c.id} className="group flex items-center justify-between w-full rounded-lg hover:bg-white/50 transition-colors pr-2">
+                <button onClick={() => setActiveCommunityId(c.id)} className={`flex-1 text-left px-3 py-2 text-sm font-medium flex items-center gap-2 font-body ${activeCommunityId === c.id ? 'bg-indigo-50 text-indigo-700 rounded-lg' : 'text-slate-600'}`}>
+                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${c.color.split(' ')[1]}`}></span>
+                  <span className="truncate">{c.name}</span>
+                </button>
+                <button onClick={(e) => { e.stopPropagation(); toggleJoinCommunity(c.id); }} className="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-red-500 p-1 transition-all" title="Leave Community">
+                  <LogOut size={14} />
+                </button>
+              </div>
+            ))}
             {communities.filter((c) => c.joined).length === 0 && (
               <p className="text-xs text-slate-400 italic px-2">You haven't joined any communities yet.</p>
             )}
@@ -134,22 +203,22 @@ export const Community = ({
           <h3 className="text-slate-900 font-bold mb-4 font-display flex-shrink-0">Discover</h3>
           <div className="space-y-3 overflow-y-auto pr-2 custom-scrollbar">
             {communities.filter((c) => !c.joined).map((c) => (
-                <div key={c.id} className="flex items-center justify-between group">
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <span className={`w-8 h-8 rounded-lg ${c.color} flex items-center justify-center text-xs font-bold flex-shrink-0`}>{c.name[0]}</span>
-                    <div className="text-xs truncate">
-                      <div className="font-bold text-slate-900 truncate">{c.name}</div>
-                      <div className="text-slate-500">{c.members} members</div>
-                    </div>
+              <div key={c.id} className="flex items-center justify-between group">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <span className={`w-8 h-8 rounded-lg ${c.color} flex items-center justify-center text-xs font-bold flex-shrink-0`}>{c.name[0]}</span>
+                  <div className="text-xs truncate">
+                    <div className="font-bold text-slate-900 truncate">{c.name}</div>
+                    <div className="text-slate-500">{c.members} members</div>
                   </div>
-                  <button onClick={() => toggleJoinCommunity(c.id)} className="text-indigo-600 hover:bg-indigo-50 p-1 rounded transition-colors flex-shrink-0"><Plus size={16} /></button>
                 </div>
-              ))}
+                <button onClick={() => toggleJoinCommunity(c.id)} className="text-indigo-600 hover:bg-indigo-50 p-1 rounded transition-colors flex-shrink-0"><Plus size={16} /></button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Center Feed */}
+      {/* --- CENTER FEED --- */}
       <div className="lg:col-span-9">
         <div className="flex items-center justify-between mb-6 max-w-3xl">
           <h2 className="text-2xl font-bold text-slate-900 font-display">Community Feed</h2>
@@ -159,35 +228,78 @@ export const Community = ({
           </button>
         </div>
 
-        {/* Weekly Challenge Banner */}
-        {!isChallengeDone && (
-          <div className="bg-gradient-to-r from-amber-600 to-orange-700 rounded-2xl p-6 text-white mb-8 shadow-xl shadow-orange-700/20 relative overflow-hidden group max-w-3xl animate-in fade-in slide-in-from-top-4">
-            <div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-1/4 -translate-y-1/4 transition-transform group-hover:scale-110 duration-700"><Trophy size={140} /></div>
-            <div className="relative z-10">
+        {/* --- WEEKLY CHALLENGE BANNER --- */}
+        <div 
+          className={`transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden origin-top max-w-3xl ${
+            animationPhase === 'finished' 
+              ? 'max-h-0 opacity-0 mb-0 scale-y-90 pointer-events-none' 
+              : 'max-h-[600px] mb-8 scale-y-100'
+          }`}
+        >
+          <div className={`rounded-2xl p-6 text-white relative overflow-hidden transition-colors duration-500 shadow-xl
+            ${animationPhase !== 'idle' 
+              ? 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-600/30' 
+              : 'bg-gradient-to-r from-amber-600 to-orange-700 shadow-orange-700/20'
+            }`}
+          >
+            
+            {/* Inject Tuned CSS Animation Elements */}
+            {animationPhase === 'sweeping' && <div className="animate-scanner-beam" />}
+            {animationPhase === 'rippling' && <div className="animate-ripple-blur" />}
+
+            {/* Background Icon */}
+            <div className={`absolute top-0 right-0 p-8 transform translate-x-1/4 -translate-y-1/4 transition-all duration-700
+              ${animationPhase !== 'idle' ? 'opacity-20 scale-125 rotate-12 text-emerald-100' : 'opacity-10 scale-100 group-hover:scale-110'}
+            `}>
+              {animationPhase !== 'idle' ? <Sparkles size={140} /> : <Trophy size={140} />}
+            </div>
+
+            {/* Main Content Area */}
+            <div className={`relative z-10 ${animationPhase === 'rippling' ? 'fade-behind-ripple' : ''}`}>
               <div className="flex items-center gap-2 mb-2">
-                <span className="bg-white/20 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider backdrop-blur-sm border border-white/10">Weekly Challenge</span>
-                <span className="text-amber-100 text-xs flex items-center gap-1 font-bold animate-pulse"><Clock size={12} /> {WEEKLY_CHALLENGE.deadline}</span>
+                <span className="bg-white/20 px-2 py-1 rounded text-xs font-bold uppercase tracking-wider backdrop-blur-sm border border-white/10">
+                  {animationPhase !== 'idle' ? 'Mission Success' : 'Weekly Challenge'}
+                </span>
+                {animationPhase === 'idle' && (
+                  <span className="text-amber-100 text-xs flex items-center gap-1 font-bold animate-pulse"><Clock size={12} /> {WEEKLY_CHALLENGE.deadline}</span>
+                )}
               </div>
-              <h3 className="text-2xl font-bold mb-2 font-display">{WEEKLY_CHALLENGE.title}</h3>
-              <p className="text-amber-50 mb-6 max-w-xl text-sm font-body leading-relaxed">{WEEKLY_CHALLENGE.description}</p>
+              
+              <h3 className="text-2xl font-bold mb-2 font-display">
+                {animationPhase !== 'idle' ? 'Challenge Completed!' : WEEKLY_CHALLENGE.title}
+              </h3>
+              
+              <p className={`mb-6 max-w-xl text-sm font-body leading-relaxed ${animationPhase !== 'idle' ? 'text-emerald-50' : 'text-amber-50'}`}>
+                {animationPhase !== 'idle' 
+                  ? 'Excellent work. Your progress has been logged and your profile has been updated.' 
+                  : WEEKLY_CHALLENGE.description
+                }
+              </p>
+
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 max-w-lg">
-                <h4 className="text-xs font-bold uppercase tracking-wider mb-3 text-amber-200">Your Progress</h4>
+                <h4 className={`text-xs font-bold uppercase tracking-wider mb-3 ${animationPhase !== 'idle' ? 'text-emerald-200' : 'text-amber-200'}`}>
+                  Your Progress
+                </h4>
                 <div className="space-y-3">
                   {challengeSteps.map((step) => (
                     <button key={step.id} onClick={() => toggleChallengeStep(step.id)} className="flex items-center gap-3 w-full text-left group/step">
-                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all ${step.done ? 'bg-white border-white text-orange-600 scale-110' : 'border-white/40 group-hover/step:border-white/60'}`}>
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center transition-all duration-300 
+                        ${step.done && animationPhase !== 'idle' ? 'bg-white border-white text-emerald-600 scale-110' : 
+                          step.done ? 'bg-white border-white text-orange-600 scale-110' : 
+                          'border-white/40 group-hover/step:border-white/60'}`}
+                      >
                         {step.done && <Check size={12} strokeWidth={3} />}
                       </div>
-                      <span className={`text-sm transition-opacity ${step.done ? 'text-white line-through opacity-60' : 'text-white'}`}>{step.text}</span>
+                      <span className={`text-sm transition-opacity ${step.done ? 'text-white line-through opacity-80' : 'text-white'}`}>{step.text}</span>
                     </button>
                   ))}
                 </div>
               </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Posts Container */}
+        {/* --- POSTS CONTAINER --- */}
         <div className="space-y-6 max-w-3xl">
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post) => {
@@ -219,7 +331,7 @@ export const Community = ({
                         <MoreHorizontal size={20} />
                       </button>
                       {activeDropdown === post.id && (
-                        <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-slate-100 py-1 z-20 animate-in fade-in zoom-in-95">
+                        <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-xl border border-slate-100 py-1 z-20 animate-in fade-in zoom-in-95 origin-top-right">
                           <button onClick={() => executeDropdown('report', post.id)} className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2"><Flag size={14} /> Report</button>
                           <button onClick={() => executeDropdown('mute', post.id)} className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 flex items-center gap-2"><Eye size={14} /> Mute</button>
                           {post.authorId === 'me' && <button onClick={() => executeDropdown('delete', post.id)} className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"><Trash2 size={14} /> Delete</button>}
@@ -236,7 +348,6 @@ export const Community = ({
                     </div>
                   )}
 
-                  {/* Comments Section */}
                   {post.comments && post.comments.length > 0 && (
                     <div className="bg-slate-50/50 rounded-lg p-3 mb-4 space-y-3 border border-slate-100/50">
                       {post.comments.map((comment) => {
@@ -293,7 +404,7 @@ export const Community = ({
               <AlertCircle size={32} />
             </div>
             <h3 className="text-xl font-bold mb-2 font-display text-slate-900">Select a Community</h3>
-            <p className="text-slate-500 font-body mb-6 text-sm">Please select a specific community from the sidebar (like "Technology" or "E-Commerce") before creating a post!</p>
+            <p className="text-slate-500 font-body mb-6 text-sm">Please select a specific community from the sidebar before creating a post!</p>
             <button onClick={() => setShowWarning(false)} className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition-colors font-body w-full shadow-md">Got it</button>
           </div>
         </div>,

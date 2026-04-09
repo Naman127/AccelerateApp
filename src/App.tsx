@@ -14,7 +14,6 @@ import {
   Medal
 } from 'lucide-react';
 
-// Gemini AI
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // 1. Import your UI Components
@@ -24,7 +23,8 @@ import { Home } from './pages/Home';
 import { Dashboard } from './pages/Dashboard';
 import { Community } from './pages/Community';
 import { Resources } from './pages/Resources';
-import { SavedMissions } from './pages/SavedMissions';
+// CHANGED: Assuming you renamed SavedMissions.tsx to Saved.tsx as discussed!
+import { Saved } from './pages/Saved'; 
 import { Calendar } from './pages/Calendar';
 import { Profile } from './pages/Profile';
 import { Mentors } from './pages/Mentors';
@@ -261,6 +261,27 @@ export default function AccelerateApp() {
       setActiveTab(tabId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+  };
+
+  const [savedResources, setSavedResources] = useState([]);
+
+  // Function to add or remove a resource from the backpack
+  const toggleSaveResource = (resourceObj) => {
+    setSavedResources((prev) => {
+      const isAlreadySaved = prev.some((r) => r.id === resourceObj.id);
+      if (isAlreadySaved) {
+        // If it's already saved, remove it
+        return prev.filter((r) => r.id !== resourceObj.id);
+      } else {
+        // If it's not saved, add it to the list
+        return [...prev, resourceObj];
+      }
+    });
+  };
+
+  // Helper to jump straight to a resource tab from the Saved page
+  const navigateToResource = (subTabName) => {
+    setActiveTab('resources');
   };
 
   const toggleSaveMission = (e, typeId) => {
@@ -837,11 +858,12 @@ export default function AccelerateApp() {
 
           <main className="flex-1 md:ml-64 min-h-screen relative z-10">
             <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
+              {/* CHANGED: This header logic now says 'Saved' instead of 'Saved Missions' */}
               <h1 className="text-xl font-bold text-slate-800 capitalize font-display">
                 {activeTab === 'home'
                   ? 'Browse Missions'
                   : activeTab === 'saved'
-                  ? 'Saved Missions'
+                  ? 'Saved'
                   : activeTab}
               </h1>
 
@@ -983,17 +1005,32 @@ export default function AccelerateApp() {
                     handleCreatePost={handleCreatePost}
                   />
                 )}
-                {activeTab === 'resources' && <Resources addToast={addToast} />}
-                {activeTab === 'saved' && (
-                  <SavedMissions
-                    savedMissions={savedMissions}
-                    expandedSavedMission={expandedSavedMission}
-                    setExpandedSavedMission={setExpandedSavedMission}
-                    toggleSaveMission={toggleSaveMission}
-                    handleStartBusiness={handleStartBusiness}
-                    setActiveTab={setActiveTab}
+                
+                {/* CHANGED: Passing the 3 new props down to Resources */}
+                {activeTab === 'resources' && (
+                  <Resources 
+                    addToast={addToast} 
+                    savedResources={savedResources} 
+                    toggleSaveResource={toggleSaveResource} 
                   />
                 )}
+
+                {/* CHANGED: Rendering the new Saved component instead of SavedMissions */}
+                {activeTab === 'saved' && (
+                  <Saved
+                    savedMissions={savedMissions}
+                    savedResources={savedResources}
+                    toggleSaveResource={toggleSaveResource}
+                    navigateToResource={navigateToResource}
+                    // Passing these props in case your Saved component needs to interact with missions
+                    handleStartBusiness={handleStartBusiness}
+                    setActiveTab={setActiveTab}
+                    toggleSaveMission={toggleSaveMission}
+                    expandedSavedMission={expandedSavedMission}
+                    setExpandedSavedMission={setExpandedSavedMission}
+                  />
+                )}
+                
                 {activeTab === 'calendar' && (
                   <Calendar
                     currentDate={currentDate}
@@ -1041,6 +1078,8 @@ export default function AccelerateApp() {
                     expandedMentorId={expandedMentorId}
                     setExpandedMentorId={setExpandedMentorId}
                     openBookingModal={openBookingModal}
+                    getAvatar={getAvatar}               
+                    accessibility={accessibility}
                   />
                 )}
                 {activeTab === 'settings' && (
