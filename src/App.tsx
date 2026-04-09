@@ -1077,8 +1077,7 @@ export default function AccelerateApp() {
                     mentors={mentors}
                     expandedMentorId={expandedMentorId}
                     setExpandedMentorId={setExpandedMentorId}
-                    openBookingModal={openBookingModal}
-                    getAvatar={getAvatar}               
+                    openBookingModal={openBookingModal}               
                     accessibility={accessibility}
                   />
                 )}

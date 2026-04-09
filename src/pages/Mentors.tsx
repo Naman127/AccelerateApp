@@ -9,6 +9,32 @@ export const Mentors = ({
   openBookingModal,
   accessibility 
 }) => {
+
+  // FBLA Presentation Fallback: Maps names directly to professional portraits
+  // if the raw data doesn't contain a valid HTTP link.
+  const getMentorPhoto = (name, avatarData) => {
+    if (avatarData && avatarData.startsWith('http')) return avatarData;
+    
+    const nameKey = name.toUpperCase();
+    const MENTOR_PHOTOS = {
+      "DAVID COHEN": "https://images.unsplash.com/photo-1556157382-97eda2d62296?w=150&h=150&fit=crop",
+      "JESSICA LIU": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop",
+      "STEVE ALTMAN": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop",
+      "SARAH FRIAR": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&h=150&fit=crop",
+      "GARRY TAN": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop",
+      "EMILY CHANG": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop",
+      "MICHAEL SEIBEL": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
+      "KAT COLE": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop",
+      "NAVAL RAVIKANT": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop",
+      "ARLAN HAMILTON": "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150&h=150&fit=crop",
+      "ALEXIS OHANIAN": "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=150&h=150&fit=crop",
+      "TIM FERRISS": "https://images.unsplash.com/photo-1504257432389-52343af06ae3?w=150&h=150&fit=crop"
+    };
+
+    // Generic professional fallback if the name isn't in the list
+    return MENTOR_PHOTOS[nameKey] || "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop";
+  };
+
   return (
     <div className="max-w-6xl mx-auto animate-fade-in relative z-10 pb-20">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -29,12 +55,13 @@ export const Mentors = ({
           return (
             <div key={mentor.id} className="bg-white/80 backdrop-blur-xl border border-white/60 rounded-3xl p-6 shadow-sm hover:shadow-lg hover:border-indigo-300 transition-all flex flex-col text-center group">
               
-              {/* FIXED: Removed getAvatar so it uses the original images again! */}
+              {/* FIXED: Uses the localized photo mapper to guarantee an image */}
               <div className="relative w-20 h-20 mx-auto mb-4">
                 <img 
-                  src={mentor.avatar} 
+                  src={getMentorPhoto(mentor.name, mentor.avatar)} 
                   alt={mentor.name} 
-                  className="w-full h-full rounded-full object-cover shadow-sm border-2 border-white group-hover:scale-105 transition-transform" 
+                  className="w-full h-full rounded-full object-cover shadow-sm border-2 border-white group-hover:scale-105 transition-transform bg-slate-100" 
+                  onError={(e) => { e.currentTarget.src = "https://images.unsplash.com/photo-1511367461989-f85a21fda167?w=150&h=150&fit=crop"; }}
                 />
                 <div className="absolute bottom-1 right-1 w-3.5 h-3.5 bg-emerald-400 border-2 border-white rounded-full shadow-sm"></div>
               </div>
