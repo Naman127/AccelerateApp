@@ -65,10 +65,10 @@ const BUSINESS_TYPES = {
 };
 
 const AVAILABLE_MENTOR_SLOTS = [
-  { date: '2026-02-17', time: '10:00 AM' },
-  { date: '2026-02-19', time: '2:30 PM' },
-  { date: '2026-02-21', time: '11:00 AM' },
-  { date: '2026-02-23', time: '4:00 PM' }
+  { date: '2026-04-17', time: '10:00 AM' },
+  { date: '2026-04-19', time: '2:30 PM' },
+  { date: '2026-04-21', time: '11:00 AM' },
+  { date: '2026-04-23', time: '4:00 PM' }
 ];
 
 const BLUEPRINTS = {
