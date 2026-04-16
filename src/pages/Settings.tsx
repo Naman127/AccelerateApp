@@ -1,6 +1,6 @@
 // src/pages/Settings.tsx
 import React from 'react';
-import { Palette, Activity, Type } from 'lucide-react';
+import { Palette, Activity, Type, Moon } from 'lucide-react';
 
 export const Settings = ({ accessibility, setAccessibility }) => {
   const toggleSetting = (key) => {
@@ -66,6 +66,23 @@ export const Settings = ({ accessibility, setAccessibility }) => {
               className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none border-2 ${accessibility.dyslexicFont ? 'bg-amber-500 border-amber-500' : 'bg-slate-300 border-slate-300'} ${accessibility.highContrast && accessibility.dyslexicFont ? '!bg-slate-900 !border-slate-900' : ''}`}
             >
               <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform border border-slate-200 shadow-sm ${accessibility.dyslexicFont ? 'translate-x-6' : 'translate-x-1'} ${accessibility.highContrast ? '!border-slate-900 !border-2' : ''}`} />
+            </button>
+          </div>
+
+          {/* Dark Mode Toggle */}
+          <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-100 transition-colors dark-override-target">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-indigo-900 text-indigo-300 rounded-lg"><Moon size={20} /></div>
+              <div>
+                <h4 className="font-bold text-slate-900 font-body dark-text-override">Dark Mode</h4>
+                <p className="text-sm text-slate-500 font-body dark-subtext-override">Switch to a low-light, high-focus dark theme.</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => toggleSetting('darkMode')}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors focus:outline-none border-2 ${accessibility.darkMode ? 'bg-indigo-500 border-indigo-500' : 'bg-slate-300 border-slate-300'}`}
+            >
+              <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform shadow-sm ${accessibility.darkMode ? 'translate-x-6' : 'translate-x-1'}`} />
             </button>
           </div>
         </div>

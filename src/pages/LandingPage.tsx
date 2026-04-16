@@ -1,32 +1,10 @@
 // src/pages/LandingPage.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  ArrowRight,
-  Map,
-  Sparkles,
-  BrainCircuit,
-  CheckCircle2,
-  Rocket,
-  Circle,
-  Check,
-  LayoutDashboard,
-  Bookmark,
-  Users,
-  BookOpen,
-  Bot,
-  Loader2,
-  Zap,
-  MessageCircle,
-  Calendar as CalendarIcon,
-  Target,
-  X,
-  Trophy,
-  Activity,
-  Smartphone,
-  ShieldCheck,
-  Heart,
-  Timer,
-  Globe,
+  ArrowRight, Map, Sparkles, BrainCircuit, CheckCircle2, Rocket, 
+  Circle, Check, LayoutDashboard, Bookmark, Users, BookOpen, Bot, 
+  Loader2, Zap, MessageCircle, Calendar as CalendarIcon, Target, X, 
+  Trophy, Activity, Smartphone, ShieldCheck, Heart, Timer, Globe, TrendingUp
 } from 'lucide-react';
 
 // --- CUSTOM HOOKS ---
@@ -53,27 +31,16 @@ const EXPANDED_DATA = {
     icon: Map,
     color: 'text-indigo-600',
     bg: 'bg-indigo-100',
-    description:
-      "Stop guessing what to do next. We've mapped out the exact, phase-by-phase timeline to launch in over 30 different industries.",
+    description: "Stop guessing what to do next. We've mapped out the exact, phase-by-phase timeline to launch in over 30 different industries.",
     content: (
       <div className="mt-6 space-y-3">
         <div className="p-4 border border-indigo-100 bg-indigo-50/50 rounded-xl flex items-center gap-4">
-          <div className="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold">
-            1
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-800">Concept & Validation</h4>
-            <p className="text-sm text-slate-500">2 Weeks • 5 Tasks</p>
-          </div>
+          <div className="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-bold">1</div>
+          <div><h4 className="font-bold text-slate-800">Concept & Validation</h4><p className="text-sm text-slate-500">2 Weeks • 5 Tasks</p></div>
         </div>
         <div className="p-4 border border-slate-100 bg-white shadow-sm rounded-xl flex items-center gap-4">
-          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
-            2
-          </div>
-          <div>
-            <h4 className="font-bold text-slate-800">Setup & Legal</h4>
-            <p className="text-sm text-slate-500">1 Week • 3 Tasks</p>
-          </div>
+          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold">2</div>
+          <div><h4 className="font-bold text-slate-800">Setup & Legal</h4><p className="text-sm text-slate-500">1 Week • 3 Tasks</p></div>
         </div>
       </div>
     ),
@@ -83,25 +50,16 @@ const EXPANDED_DATA = {
     icon: Sparkles,
     color: 'text-purple-600',
     bg: 'bg-purple-100',
-    description:
-      'Powered by Google Gemini. Describe your unique startup idea, and watch it generate a custom, perfectly structured launch blueprint in 3 seconds.',
+    description: 'Powered by Google Gemini. Describe your unique startup idea, and watch it generate a custom, perfectly structured launch blueprint in 3 seconds.',
     content: (
       <div className="mt-6 bg-slate-900 rounded-2xl p-6 border border-slate-800 text-left relative overflow-hidden">
         <div className="flex items-center gap-3 mb-6 bg-white/10 p-3 rounded-xl">
           <Bot className="text-purple-300" size={18} />
-          <p className="text-sm text-slate-200 italic">
-            "I want to start a drone photography business."
-          </p>
+          <p className="text-sm text-slate-200 italic">"I want to start a drone photography business."</p>
         </div>
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="text-green-400" size={16} />
-            <div className="h-2 w-3/4 bg-slate-700 rounded-full"></div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Loader2 className="text-purple-400 animate-spin" size={16} />
-            <div className="h-2 w-2/3 bg-slate-600 rounded-full animate-pulse"></div>
-          </div>
+          <div className="flex items-center gap-3"><CheckCircle2 className="text-green-400" size={16} /><div className="h-2 w-3/4 bg-slate-700 rounded-full"></div></div>
+          <div className="flex items-center gap-3"><Loader2 className="text-purple-400 animate-spin" size={16} /><div className="h-2 w-2/3 bg-slate-600 rounded-full animate-pulse"></div></div>
         </div>
       </div>
     ),
@@ -111,22 +69,11 @@ const EXPANDED_DATA = {
     icon: BrainCircuit,
     color: 'text-cyan-600',
     bg: 'bg-cyan-100',
-    description:
-      'Input your budget, time, and skills. Our algorithm matches you with the exact business model you are statistically most likely to succeed in.',
+    description: 'Input your budget, time, and skills. Our algorithm matches you with the exact business model you are statistically most likely to succeed in.',
     content: (
       <div className="mt-6 grid grid-cols-2 gap-4">
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center">
-          <div className="text-2xl font-black text-cyan-600 mb-1">$500</div>
-          <div className="text-xs uppercase font-bold text-slate-400">
-            Budget
-          </div>
-        </div>
-        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center">
-          <div className="text-2xl font-black text-cyan-600 mb-1">Tech</div>
-          <div className="text-xs uppercase font-bold text-slate-400">
-            Superpower
-          </div>
-        </div>
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center"><div className="text-2xl font-black text-cyan-600 mb-1">$500</div><div className="text-xs uppercase font-bold text-slate-400">Budget</div></div>
+        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 text-center"><div className="text-2xl font-black text-cyan-600 mb-1">Tech</div><div className="text-xs uppercase font-bold text-slate-400">Superpower</div></div>
       </div>
     ),
   },
@@ -135,24 +82,14 @@ const EXPANDED_DATA = {
     icon: Users,
     color: 'text-amber-600',
     bg: 'bg-amber-100',
-    description:
-      'Book a 1-on-1 video session with verified student founders who have successfully launched businesses and competed at a national level.',
+    description: 'Book a 1-on-1 video session with verified student founders who have successfully launched businesses and competed at a national level.',
     content: (
       <div className="mt-6 p-4 border border-slate-100 rounded-xl bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <img
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100"
-            className="w-10 h-10 rounded-full object-cover shadow-sm"
-            alt="Marcus"
-          />
-          <div>
-            <p className="font-bold text-sm text-slate-900">Marcus Chen</p>
-            <p className="text-xs text-slate-500">SaaS • $10k MRR</p>
-          </div>
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100" className="w-10 h-10 rounded-full object-cover shadow-sm" alt="Marcus" />
+          <div><p className="font-bold text-sm text-slate-900">Marcus Chen</p><p className="text-xs text-slate-500">SaaS • $10k MRR</p></div>
         </div>
-        <button className="px-4 py-2 bg-amber-100 text-amber-700 text-xs font-bold rounded-lg hover:bg-amber-200">
-          Book
-        </button>
+        <button className="px-4 py-2 bg-amber-100 text-amber-700 text-xs font-bold rounded-lg hover:bg-amber-200">Book</button>
       </div>
     ),
   },
@@ -161,107 +98,67 @@ const EXPANDED_DATA = {
     icon: CalendarIcon,
     color: 'text-rose-600',
     bg: 'bg-rose-100',
-    description:
-      'Keep your mission on track. A unified view of your blueprint deadlines, mentor sessions, and critical submission dates.',
-    content: (
-      <div className="mt-6 h-32 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-center">
-        <CalendarIcon size={48} className="text-rose-200" />
-      </div>
-    ),
+    description: 'Keep your mission on track. A unified view of your blueprint deadlines, mentor sessions, and critical submission dates.',
+    content: (<div className="mt-6 h-32 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-center"><CalendarIcon size={48} className="text-rose-200" /></div>),
   },
   resources: {
     title: 'Resource Library',
     icon: BookOpen,
     color: 'text-emerald-600',
     bg: 'bg-emerald-100',
-    description:
-      'Stop reinventing the wheel. Access our vault of legal templates, financial models, pitch deck layouts, and marketing plans.',
-    content: (
-      <div className="mt-6 h-32 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center">
-        <BookOpen size={48} className="text-emerald-200" />
-      </div>
-    ),
+    description: 'Stop reinventing the wheel. Access our vault of legal templates, financial models, pitch deck layouts, and marketing plans.',
+    content: (<div className="mt-6 h-32 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center"><BookOpen size={48} className="text-emerald-200" /></div>),
   },
   analyzer: {
     title: 'Pitch Analyzer',
     icon: Zap,
     color: 'text-amber-600',
     bg: 'bg-amber-100',
-    description:
-      'Paste your elevator pitch and let our AI analyze it for clarity, market hook, and overall strength. Get a score out of 100 instantly.',
-    content: (
-      <div className="mt-6 h-32 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center">
-        <Zap size={48} className="text-amber-200" />
-      </div>
-    ),
+    description: 'Paste your elevator pitch and let our AI analyze it for clarity, market hook, and overall strength. Get a score out of 100 instantly.',
+    content: (<div className="mt-6 h-32 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center"><Zap size={48} className="text-amber-200" /></div>),
   },
   community: {
     title: 'Founder Community',
     icon: MessageCircle,
     color: 'text-slate-600',
     bg: 'bg-slate-100',
-    description:
-      'Entrepreneurship is lonely. Join a network of ambitious student founders to share wins, ask for feedback, and find co-founders.',
-    content: (
-      <div className="mt-6 h-32 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center">
-        <MessageCircle size={48} className="text-slate-200" />
-      </div>
-    ),
+    description: 'Entrepreneurship is lonely. Join a network of ambitious student founders to share wins, ask for feedback, and find co-founders.',
+    content: (<div className="mt-6 h-32 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-center"><MessageCircle size={48} className="text-slate-200" /></div>),
   },
   lessons: {
     title: 'Mini-Lessons',
     icon: Target,
     color: 'text-fuchsia-600',
     bg: 'bg-fuchsia-100',
-    description:
-      "Learn essential startup theory in 5 minutes. Flash-card style lessons on everything from 'The Mom Test' to 'LLC Formation'.",
-    content: (
-      <div className="mt-6 h-32 bg-fuchsia-50 border border-fuchsia-100 rounded-xl flex items-center justify-center">
-        <Target size={48} className="text-fuchsia-200" />
-      </div>
-    ),
+    description: "Learn essential startup theory in 5 minutes. Flash-card style lessons on everything from 'The Mom Test' to 'LLC Formation'.",
+    content: (<div className="mt-6 h-32 bg-fuchsia-50 border border-fuchsia-100 rounded-xl flex items-center justify-center"><Target size={48} className="text-fuchsia-200" /></div>),
   },
   scale: {
     title: 'Built for Scale',
     icon: Rocket,
     color: 'text-rose-600',
     bg: 'bg-rose-100',
-    description:
-      'Whether you are a solo hacker in your bedroom or managing 50 different student teams, Accelerate handles it seamlessly.',
-    content: (
-      <div className="mt-6 h-32 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-center">
-        <Rocket size={48} className="text-rose-200" />
-      </div>
-    ),
+    description: 'Whether you are a solo hacker in your bedroom or managing 50 different student teams, Accelerate handles it seamlessly.',
+    content: (<div className="mt-6 h-32 bg-rose-50 border border-rose-100 rounded-xl flex items-center justify-center"><Rocket size={48} className="text-rose-200" /></div>),
   },
   tracking: {
     title: 'Task Tracking',
     icon: CheckCircle2,
     color: 'text-green-600',
     bg: 'bg-green-100',
-    description:
-      'Never lose momentum. Our granular checklist system ensures you always know the micro-steps required to finish the macro-phase.',
-    content: (
-      <div className="mt-6 h-32 bg-green-50 border border-green-100 rounded-xl flex items-center justify-center">
-        <CheckCircle2 size={48} className="text-green-200" />
-      </div>
-    ),
+    description: 'Never lose momentum. Our granular checklist system ensures you always know the micro-steps required to finish the macro-phase.',
+    content: (<div className="mt-6 h-32 bg-green-50 border border-green-100 rounded-xl flex items-center justify-center"><CheckCircle2 size={48} className="text-green-200" /></div>),
   },
   gamified: {
     title: 'Quantified Progression',
     icon: Trophy,
     color: 'text-yellow-600',
     bg: 'bg-yellow-100',
-    description:
-      'An intuitive progress bar that always keeps you up-to-date on the status of your venture.',
+    description: 'An intuitive progress bar that always keeps you up-to-date on the status of your venture.',
     content: (
       <div className="mt-6 flex gap-4">
-        <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center border-2 border-yellow-400">
-          <Trophy className="text-yellow-500" />
-        </div>
-        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center">
-          <Trophy className="text-slate-300" />
-        </div>
+        <div className="w-16 h-16 rounded-full bg-yellow-100 flex items-center justify-center border-2 border-yellow-400"><Trophy className="text-yellow-500" /></div>
+        <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center"><Trophy className="text-slate-300" /></div>
       </div>
     ),
   },
@@ -270,16 +167,11 @@ const EXPANDED_DATA = {
     icon: Activity,
     color: 'text-blue-600',
     bg: 'bg-blue-100',
-    description:
-      "Track your startup's velocity. Visual progress bars and completion metrics keep you fully aware of your momentum.",
+    description: "Track your startup's velocity. Visual progress bars and completion metrics keep you fully aware of your momentum.",
     content: (
       <div className="mt-6 space-y-3">
-        <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-blue-500 w-[65%]"></div>
-        </div>
-        <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
-          <div className="h-full bg-indigo-500 w-[40%]"></div>
-        </div>
+        <div className="h-4 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-blue-500 w-[65%]"></div></div>
+        <div className="h-4 bg-slate-100 rounded-full overflow-hidden"><div className="h-full bg-indigo-500 w-[40%]"></div></div>
       </div>
     ),
   },
@@ -288,26 +180,16 @@ const EXPANDED_DATA = {
     icon: Smartphone,
     color: 'text-slate-600',
     bg: 'bg-slate-200',
-    description:
-      'Fully responsive architecture. Review your business blueprints on your laptop at home, or check off tasks on your phone between classes.',
-    content: (
-      <div className="mt-6 h-32 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center">
-        <Smartphone size={48} className="text-slate-300" />
-      </div>
-    ),
+    description: 'Fully responsive architecture. Review your business blueprints on your laptop at home, or check off tasks on your phone between classes.',
+    content: (<div className="mt-6 h-32 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center"><Smartphone size={48} className="text-slate-300" /></div>),
   },
   security: {
     title: 'Secure Architecture',
     icon: ShieldCheck,
     color: 'text-emerald-600',
     bg: 'bg-emerald-100',
-    description:
-      'Your intellectual property is yours. Built with modern, secure frameworks so your billion-dollar ideas remain strictly confidential.',
-    content: (
-      <div className="mt-6 h-32 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center">
-        <ShieldCheck size={48} className="text-emerald-200" />
-      </div>
-    ),
+    description: 'Your intellectual property is yours. Built with modern, secure frameworks so your billion-dollar ideas remain strictly confidential.',
+    content: (<div className="mt-6 h-32 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center"><ShieldCheck size={48} className="text-emerald-200" /></div>),
   },
   intelligence: { 
     title: 'Market Intelligence',
@@ -315,57 +197,24 @@ const EXPANDED_DATA = {
     color: 'text-blue-600',
     bg: 'bg-blue-100',
     description: 'Access real-time industry trends, competitor analysis, and market gap detection tools to validate your idea before writing a single line of code.',
-    content: (
-      <div className="mt-6 h-32 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center">
-        <Globe size={48} className="text-blue-200" />
-      </div>
-    ),
+    content: (<div className="mt-6 h-32 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center"><Globe size={48} className="text-blue-200" /></div>),
   },
-
   uptime: {
     title: 'Zero Latency',
     icon: Timer,
     color: 'text-indigo-600',
     bg: 'bg-indigo-100',
-    description:
-      'Built for speed. Our modern React stack ensures instantaneous page loads and seamless transitions, no matter how large the project.',
-    content: (
-      <div className="mt-6 h-32 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center">
-        <Timer size={48} className="text-indigo-200" />
-      </div>
-    ),
+    description: 'Built for speed. Our modern React stack ensures instantaneous page loads and seamless transitions, no matter how large the project.',
+    content: (<div className="mt-6 h-32 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center"><Timer size={48} className="text-indigo-200" /></div>),
   },
 };
 
 // --- COMPONENTS ---
 
-// OPTIMIZED: Hardware Acceleration Enabled
-const PuzzlePiece = ({
-  id,
-  className,
-  delay,
-  tx,
-  ty,
-  rot,
-  isVisible,
-  onClick,
-  children,
-  icon: Icon,
-  glassColor = 'from-white/40 to-white/10',
-}) => {
+const PuzzlePiece = ({ id, className, delay, tx, ty, rot, isVisible, onClick, children, icon: Icon, glassColor = 'from-white/40 to-white/10' }) => {
   const style = isVisible
-    ? {
-        transform: 'translate3d(0px, 0px, 0px) rotate(0deg) scale(1)',
-        opacity: 1,
-        transitionDelay: delay,
-        willChange: 'transform, opacity'
-      }
-    : {
-        transform: `translate3d(${tx}px, ${ty}px, 0px) rotate(${rot}deg) scale(0.8)`,
-        opacity: 0,
-        transitionDelay: '0s',
-        willChange: 'transform, opacity'
-      };
+    ? { transform: 'translate3d(0px, 0px, 0px) rotate(0deg) scale(1)', opacity: 1, transitionDelay: delay, willChange: 'transform, opacity' }
+    : { transform: `translate3d(${tx}px, ${ty}px, 0px) rotate(${rot}deg) scale(0.8)`, opacity: 0, transitionDelay: '0s', willChange: 'transform, opacity' };
 
   return (
     <div
@@ -373,111 +222,18 @@ const PuzzlePiece = ({
       style={style}
       className={`relative overflow-hidden bg-gradient-to-br ${glassColor} border border-white/50 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-2 cursor-pointer transition duration-[800ms] ease-[cubic-bezier(0.16,1,0.3,1)] group ${className}`}
     >
-      {Icon && (
-        <Icon
-          className="absolute -bottom-8 -right-8 text-slate-900 opacity-[0.03] group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-700 pointer-events-none will-change-transform"
-          size={180}
-        />
-      )}
+      {Icon && <Icon className="absolute -bottom-8 -right-8 text-slate-900 opacity-[0.03] group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-700 pointer-events-none will-change-transform" size={180} />}
       <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-      <div className="relative z-10 h-full flex flex-col p-6 pointer-events-none">
-        {children}
-      </div>
+      <div className="relative z-10 h-full flex flex-col p-6 pointer-events-none">{children}</div>
     </div>
   );
 };
 
-const AppMockup = () => (
-  <div className="w-[900px] h-[650px] bg-[#FDFCF6]/95 backdrop-blur-3xl rounded-2xl flex overflow-hidden shadow-[0_40px_100px_-20px_rgba(79,70,229,0.3)] border border-white/80 text-left relative z-20 font-body">
-    <div className="w-56 bg-white/60 border-r border-slate-200/50 p-4 flex flex-col">
-      <div className="flex items-center gap-2 px-2 mb-8 mt-2">
-        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-          <Rocket size={18} fill="currentColor" />
-        </div>
-        <span className="font-bold tracking-tight text-slate-900 font-display text-lg">
-          Accelerate
-        </span>
-      </div>
-      <div className="space-y-1">
-        <div className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-200 text-sm font-medium">
-          <LayoutDashboard size={18} /> Dashboard
-        </div>
-        <div className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-600 text-sm font-medium">
-          <Rocket size={18} /> Browse
-        </div>
-        <div className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-600 text-sm font-medium">
-          <Bookmark size={18} /> Saved Missions
-        </div>
-        <div className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-slate-600 text-sm font-medium">
-          <Users size={18} /> Community
-        </div>
-      </div>
-    </div>
-    <div className="flex-1 p-8 flex flex-col gap-6 relative">
-      <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/30 via-white/50 to-purple-50/30 pointer-events-none"></div>
-      <div className="relative z-10 bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-6 shadow-sm">
-        <div className="flex justify-between items-end mb-8">
-          <div>
-            <h2 className="text-2xl font-black text-slate-900 font-display tracking-tight uppercase">
-              Mission Control
-            </h2>
-            <p className="text-slate-500 text-sm">
-              Tracking: Mobile Application
-            </p>
-          </div>
-          <div className="text-right">
-            <span className="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-violet-600 font-display">
-              25%
-            </span>
-          </div>
-        </div>
-        <div className="relative mt-8 mb-2 w-full h-3 bg-slate-100 rounded-full">
-          <div className="absolute top-0 left-0 h-full w-[25%] bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-full"></div>
-          <div className="absolute top-1/2 left-[25%] transform -translate-x-1/2 -translate-y-[26px] text-indigo-600 rotate-45 z-20 drop-shadow-md">
-            <Rocket size={32} />
-          </div>
-        </div>
-      </div>
-      <div className="relative z-10 bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl overflow-hidden shadow-sm flex-1">
-        <div className="w-full h-36 bg-slate-800 relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 to-transparent flex items-end p-6">
-            <div>
-              <h2 className="text-xl font-bold text-white font-display uppercase">
-                Mobile App Development
-              </h2>
-            </div>
-          </div>
-        </div>
-        <div className="p-6 space-y-4">
-          <div className="w-full p-3 rounded-lg border bg-green-50/60 border-green-200 flex items-center gap-3">
-            <CheckCircle2 size={18} className="text-green-500" />{' '}
-            <span className="text-slate-400 line-through text-sm">
-              User Flow Mapping
-            </span>
-          </div>
-          <div className="w-full p-3 rounded-lg border bg-green-50/60 border-green-200 flex items-center gap-3">
-            <CheckCircle2 size={18} className="text-green-500" />{' '}
-            <span className="text-slate-400 line-through text-sm">
-              Competitor Research
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 const TYPING_WORDS = [
-  'SaaS Startup.',
-  'Fashion Business.',
-  'Creative Agency.',
-  'Event Catering Service.',
-  'Non-Profit.',
-  'Personal Brand.',
-  'Your Ambition.'
+  'Art & Design', 'Content', 'Food & Beverage', 
+  'Services', 'E-Commerce', 'Technology', 'Ambition'
 ];
 
-// --- NEW ISOLATED COMPONENT ---
 const IsolatedTypewriter = () => {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
@@ -494,16 +250,14 @@ const IsolatedTypewriter = () => {
     } else {
       const typeSpeed = isDeleting ? 30 : 80;
       timeout = setTimeout(() => {
-        setCurrentText(
-          currentWord.substring(0, currentText.length + (isDeleting ? -1 : 1))
-        );
+        setCurrentText(currentWord.substring(0, currentText.length + (isDeleting ? -1 : 1)));
       }, typeSpeed);
     }
     return () => clearTimeout(timeout);
   }, [currentText, isDeleting, currentWordIndex]);
 
   return (
-    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 inline-block text-left whitespace-nowrap">
+    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 inline-block text-center whitespace-nowrap text-4xl sm:text-6xl lg:text-8xl font-black font-display tracking-tight">
       {currentText}
     </span>
   );
@@ -512,7 +266,6 @@ const IsolatedTypewriter = () => {
 export const LandingPage = ({ onEnter }) => {
   const [heroRef, isHeroVisible] = useOnScreen({ threshold: 0.1 });
   const [gridRef, isGridVisible] = useOnScreen({ threshold: 0.05 });
-
   const [expandedId, setExpandedId] = useState(null);
 
   useEffect(() => {
@@ -528,53 +281,95 @@ export const LandingPage = ({ onEnter }) => {
         .ai-line { height: 8px; background: #cbd5e1; border-radius: 4px; animation: loadSkeleton 2s infinite ease-in-out alternate; }
         .ai-line-1 { width: 85%; } .ai-line-2 { width: 65%; animation-delay: 0.2s; } 
         @keyframes loadSkeleton { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+        
+        /* Artifact Animations */
+        @keyframes float-1 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-15px) rotate(3deg); } }
+        @keyframes float-2 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(12px) rotate(-4deg); } }
+        @keyframes float-3 { 0%, 100% { transform: translateY(0px) scale(1); } 50% { transform: translateY(-10px) scale(1.05); } }
+        @keyframes float-4 { 0%, 100% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-8px) rotate(5deg); } }
+
+        /* --- NEW AURORA BLOB ANIMATIONS --- */
+        @keyframes aurora-radiate-1 {
+          0% { transform: translate(-5%, -5%) scale(1); opacity: 0.4; }
+          50% { transform: translate(2%, 2%) scale(1.4); opacity: 0.7; }
+          100% { transform: translate(-5%, -5%) scale(1); opacity: 0.4; }
+        }
+        @keyframes aurora-radiate-2 {
+          0% { transform: translate(5%, -5%) scale(1.2); opacity: 0.3; }
+          50% { transform: translate(-2%, 5%) scale(0.9); opacity: 0.6; }
+          100% { transform: translate(5%, -5%) scale(1.2); opacity: 0.3; }
+        }
+        @keyframes aurora-radiate-3 {
+          0% { transform: translate(0%, 5%) scale(0.9); opacity: 0.3; }
+          50% { transform: translate(0%, -5%) scale(1.5); opacity: 0.7; }
+          100% { transform: translate(0%, 5%) scale(0.9); opacity: 0.3; }
+        }
       `}</style>
 
-      {/* --- CLEAN HERO SECTION --- */}
+      {/* --- FULL-BLEED RADIATING BACKGROUND --- */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Giant Indigo Core (Top Left Radiance) */}
+        <div 
+          className="absolute -top-[20%] -left-[10%] w-[120vw] h-[120vh] bg-indigo-600/20 rounded-full blur-[150px] mix-blend-multiply"
+          style={{ animation: 'aurora-radiate-1 15s ease-in-out infinite' }}
+        ></div>
+        
+        {/* Soft Amber Glow (Top Right Radiance) */}
+        <div 
+          className="absolute top-[5%] -right-[20%] w-[120vw] h-[120vh] bg-amber-300/25 rounded-full blur-[150px] mix-blend-multiply"
+          style={{ animation: 'aurora-radiate-2 18s ease-in-out infinite' }}
+        ></div>
+
+        {/* Deep Blue/Indigo Anchor (Bottom Radiance to support the puzzle grid) */}
+        <div 
+          className="absolute -bottom-[30%] left-[5%] w-[150vw] h-[120vh] bg-blue-600/15 rounded-full blur-[150px] mix-blend-multiply"
+          style={{ animation: 'aurora-radiate-3 22s ease-in-out infinite' }}
+        ></div>
+      </div>
+
+      {/* --- REDESIGNED CONCEPT 3 HERO SECTION --- */}
       <div
         ref={heroRef}
-        className={`max-w-[100rem] mx-auto px-6 sm:px-16 lg:pl-12 lg:pr-24 pt-20 pb-16 min-h-[95vh] flex flex-col justify-center relative transition-all duration-1000 z-10 ${
+        className={`max-w-[100rem] mx-auto px-6 sm:px-16 pt-24 pb-20 min-h-[90vh] flex flex-col items-center justify-center relative transition-all duration-1000 z-10 ${
           isHeroVisible ? 'opacity-100 blur-none' : 'opacity-0 blur-lg'
         } ${expandedId ? 'opacity-20 blur-xl pointer-events-none' : ''}`}
       >
-        <div className="absolute right-[-30%] lg:right-[-5%] top-[10%] w-[800px] lg:w-[1000px] opacity-30 lg:opacity-100 pointer-events-none perspective-[2000px] z-0">
-          <div className="transform rotateX-[10deg] rotateY-[-20deg] rotateZ-[2deg] scale-100 lg:scale-105">
-            <AppMockup />
-          </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-tr from-indigo-500/20 via-purple-500/20 to-cyan-500/20 rounded-full blur-[120px] -z-10"></div>
-        </div>
 
-        <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-white/80 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-8 shadow-sm backdrop-blur-md">
-            <Sparkles size={14} className="text-indigo-500" /> Accelerate Your
-            Future
+        {/* MAIN TEXT ANCHOR */}
+        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-white/80 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-10 shadow-sm backdrop-blur-md">
+            <Sparkles size={14} className="text-indigo-500" /> Accelerate Your Future
           </div>
 
-          {/* OPTIMIZED: Width explicitly set to prevent text wrapping onto two lines */}
-          <h1 className="text-5xl sm:text-7xl lg:text-[6.5rem] font-black text-slate-900 font-display leading-[1.05] mb-8 tracking-tight drop-shadow-sm flex flex-col">
-            <span>Accelerate your</span>
-            <div className="flex items-center flex-nowrap min-w-[350px] sm:min-w-[500px] lg:min-w-[700px] overflow-visible">
-              <IsolatedTypewriter />
-              <span className="typewriter-cursor h-10 sm:h-16 lg:h-20 ml-1 inline-block align-middle"></span>
+          <div className="flex flex-col items-center justify-center mb-8 w-full">
+            <span className="text-5xl sm:text-7xl lg:text-[6.5rem] font-black text-slate-900 font-display leading-tight tracking-tight drop-shadow-sm mb-4 sm:mb-6">
+              Accelerate your
+            </span>
+            
+            {/* The Typewriter "Pill" Cage */}
+            <div className="h-20 sm:h-28 lg:h-36 w-[450px] sm:w-[730px] lg:w-[1010px] bg-white/60 backdrop-blur-xl border-2 border-white/80 rounded-full shadow-[0_20px_50px_rgba(79,70,229,0.15)] flex items-center justify-center relative overflow-hidden transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10"></div>
+              <div className="relative z-10 flex items-center justify-center w-full">
+                 <IsolatedTypewriter />
+                 <span className="typewriter-cursor h-10 sm:h-16 lg:h-20 ml-2 sm:ml-3 inline-block align-middle w-1 sm:w-2 bg-slate-900 animate-pulse rounded-full"></span>
+              </div>
             </div>
-          </h1>
+          </div>
 
-          <p className="text-xl text-slate-600 font-body max-w-2xl mb-12 leading-relaxed bg-white/40 backdrop-blur-sm p-5 rounded-2xl border border-white/50 shadow-sm">
+          <p className="text-lg sm:text-xl text-slate-600 font-body max-w-2xl mb-12 leading-relaxed bg-white/40 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-white/50 shadow-sm">
             Stop analyzing. Start building. Accelerate provides structured,
             industry-specific blueprints that guide student founders from
             concept to their first customer.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-6 justify-start">
-            <button
-              onClick={onEnter}
-              className="bg-slate-900 hover:bg-indigo-600 text-white px-10 py-5 rounded-2xl font-bold text-lg shadow-2xl shadow-slate-900/20 hover:shadow-indigo-500/30 transition-all duration-300 hover:-translate-y-1 flex items-center gap-3 font-body group relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-              Enter Workspace{' '}
-              <ArrowRight className="group-hover:translate-x-1.5 transition-transform relative z-10" />
-            </button>
-          </div>
+          <button
+            onClick={onEnter}
+            className="bg-slate-900 hover:bg-indigo-600 text-white px-10 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-lg shadow-2xl shadow-slate-900/20 hover:shadow-indigo-500/30 transition-all duration-300 hover:-translate-y-1 flex items-center gap-3 font-body group relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+            Enter Workspace{' '}
+            <ArrowRight className="group-hover:translate-x-1.5 transition-transform relative z-10" />
+          </button>
         </div>
       </div>
 
