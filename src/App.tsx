@@ -260,7 +260,14 @@ export default function AccelerateApp() {
       }
       
       setActiveTab(tabId);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Target the new main scroll container instead of the window
+      const mainContainer = document.getElementById('main-scroll-container');
+      if (mainContainer) {
+        mainContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   };
 
@@ -825,7 +832,7 @@ export default function AccelerateApp() {
   const filteredPosts = getFilteredPosts();
 
   return (
-    <div className={`min-h-screen text-slate-900 flex relative overflow-hidden bg-[#FDFCF6] transition-all duration-500
+    <div className={`h-screen text-slate-900 flex relative overflow-hidden bg-[#FDFCF6] transition-all duration-500
       ${accessibility.highContrast ? 'contrast-125 saturate-150' : ''} 
       ${accessibility.reduceMotion ? '[&_*]:!transition-none [&_*]:!animate-none' : ''}
       ${accessibility.dyslexicFont ? 'font-serif tracking-wide' : 'font-sans'}
@@ -870,32 +877,69 @@ export default function AccelerateApp() {
           
           /* 2. Convert White Glass to Dark Frosted Glass */
           .bg-white\\/40, .bg-white\\/60, .bg-white\\/70, .bg-white\\/80, .bg-white\\/90, .bg-white {
-            background-color: rgba(15, 23, 42, 0.6) !important; /* slate-900/60 */
-            border-color: rgba(51, 65, 85, 0.5) !important; /* slate-700/50 */
+            background-color: rgba(15, 23, 42, 0.6) !important; 
+            border-color: rgba(51, 65, 85, 0.5) !important; 
             color: #f8fafc !important;
           }
 
-          /* 3. Convert Solid Light Grays to Dark Panels */
+          /* 3. Refine Base Grays (Prevent the muddy look) */
           .bg-slate-50, .bg-slate-100, .bg-slate-200 {
-            background-color: rgba(30, 41, 59, 0.4) !important; /* slate-800/40 */
-            border-color: rgba(71, 85, 105, 0.4) !important; /* slate-600/40 */
+            background-color: rgba(30, 41, 59, 0.4) !important; 
+            border-color: rgba(51, 65, 85, 0.5) !important; 
           }
 
-          /* 4. Text Color Inversions (Soft Whites/Grays for readability) */
+          /* --- THE SPECIFIC UI FIXES --- */
+
+          /* FIX 1: Hero Title on Browse Page */
+          /* Converts the dark text gradient to a glowing silver/white */
+          .from-slate-900.to-slate-800 {
+            background-image: linear-gradient(to bottom, #ffffff, #94a3b8) !important;
+          }
+
+          /* FIX 2 & 3: Sidebar Hovers & Subtab Switchers */
+          /* Replaces muddy gray hovers with a subtle, glowing indigo */
+          .hover\\:bg-slate-50\\/50:hover, .hover\\:bg-slate-50:hover, .hover\\:bg-slate-100:hover, .hover\\:bg-white\\/50:hover {
+            background-color: rgba(99, 102, 241, 0.15) !important;
+            color: #a5b4fc !important;
+          }
+
+          /* FIX 4: Mission Control Dashboard Background */
+          /* Converts the light holographic sheen into a deep space gradient */
+          .from-indigo-50\\/30 {
+            background-image: linear-gradient(to bottom right, rgba(79, 70, 229, 0.15), rgba(2, 6, 23, 0.8), rgba(168, 85, 247, 0.15)) !important;
+          }
+
+          /* FIX 5: Blueprint Steps & Active Indicators */
+          /* Makes completed tasks and active blocks pop with neon indigo */
+          .bg-indigo-50 {
+            background-color: rgba(79, 70, 229, 0.1) !important;
+            border-color: rgba(79, 70, 229, 0.3) !important;
+          }
+          .bg-indigo-100 {
+            background-color: rgba(79, 70, 229, 0.2) !important;
+          }
+
+          /* --- TEXT VISIBILITY TUNING --- */
+          
+          /* General text inversions */
           .text-slate-900, .text-slate-800, .text-slate-700 { 
-            color: #f8fafc !important; /* slate-50 */
+            color: #f8fafc !important; 
           }
           .text-slate-600, .text-slate-500, .text-slate-400 { 
-            color: #94a3b8 !important; /* slate-400 */
+            color: #cbd5e1 !important; /* Lightened from 400 for better contrast */
+          }
+          
+          /* Force active active tabs and highlights to be bright pastel indigo */
+          .text-indigo-700, .text-indigo-800, .text-indigo-900 {
+            color: #a5b4fc !important;
           }
 
-          /* 5. The Magic: Make the Auroras Glow */
-          /* Changing multiply to screen makes light colors radiate in the dark */
+          /* The Magic: Make the Background Auroras Glow */
           .mix-blend-multiply {
             mix-blend-mode: screen !important;
             opacity: 0.15 !important; 
           }
-        ` : ''}
+        ` : ''}     
       `}</style>
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div
@@ -955,7 +999,7 @@ export default function AccelerateApp() {
             onReturnHome={() => setHasEnteredApp(false)}
           />
 
-          <main className="flex-1 md:ml-64 min-h-screen relative z-10">
+          <main id="main-scroll-container" className="flex-1 md:ml-64 h-screen overflow-y-auto relative z-10 pb-20 md:pb-0">
             <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
               {/* CHANGED: This header logic now says 'Saved' instead of 'Saved Missions' */}
               <h1 className="text-xl font-bold text-slate-800 capitalize font-display">
