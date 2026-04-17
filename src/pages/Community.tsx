@@ -24,7 +24,8 @@ export const Community = ({
   handleAddComment,
   toggleLikePost,
   handleSharePost,
-  handleCreatePost
+  handleCreatePost,
+  globalSearch // <-- ADDED PROP
 }) => {
   // LOCAL STATE
   const [newPostContent, setNewPostContent] = useState('');
@@ -119,6 +120,14 @@ export const Community = ({
     handleDropdownAction(action, postId);
     setActiveDropdown(null);
   };
+
+  // --- SAFE GLOBAL SEARCH FILTERING ---
+  const displayPosts = globalSearch 
+    ? filteredPosts.filter(p => 
+        p.content?.toLowerCase().includes(globalSearch.toLowerCase()) || 
+        (p.tags && p.tags.some(t => t?.toLowerCase().includes(globalSearch.toLowerCase())))
+      )
+    : filteredPosts;
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -301,13 +310,13 @@ export const Community = ({
 
         {/* --- POSTS CONTAINER --- */}
         <div className="space-y-6 max-w-3xl">
-          {filteredPosts.length > 0 ? (
-            filteredPosts.map((post) => {
+          {displayPosts.length > 0 ? (
+            displayPosts.map((post) => {
               const author = getAuthor(post.authorId);
               const community = getCommunity(post.communityId);
 
               return (
-                <div key={post.id} className="bg-white/70 backdrop-blur-md border border-white/50 rounded-xl p-6 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300">
+                <div key={post.id} className={`bg-white/70 backdrop-blur-md border border-white/50 rounded-xl p-6 shadow-sm hover:shadow-xl hover:shadow-indigo-500/5 transition-all duration-300 ${globalSearch ? 'search-match' : ''}`}>
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       <button onClick={() => { setViewingUserId(post.authorId); setActiveTab('profile'); }} className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden hover:ring-2 hover:ring-indigo-400 transition-all">
@@ -388,8 +397,10 @@ export const Community = ({
           ) : (
             <div className="text-center py-12 bg-white/60 backdrop-blur-xl rounded-xl border border-dashed border-slate-300 max-w-3xl">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-300"><Users size={32} /></div>
-              <h3 className="text-lg font-bold text-slate-700 mb-2 font-display">No posts yet</h3>
-              <p className="text-slate-500 text-sm mb-4 font-body">Be the first to share something with the community!</p>
+              <h3 className="text-lg font-bold text-slate-700 mb-2 font-display">No posts found</h3>
+              <p className="text-slate-500 text-sm mb-4 font-body">
+                {globalSearch ? "No posts match your search query." : "Be the first to share something with the community!"}
+              </p>
             </div>
           )}
         </div>

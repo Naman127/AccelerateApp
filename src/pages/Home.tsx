@@ -64,7 +64,8 @@ export const Home = ({
   isQuizOpen, setIsQuizOpen,
   quizStep, handleQuizAnswer,
   quizResult, resetQuiz,
-  showDnaTooltip, setShowDnaTooltip
+  showDnaTooltip, setShowDnaTooltip,
+  globalSearch // <-- ADDED PROP
 }) => {
   // LOCAL STATE - AI Typing no longer lags the app!
   const [aiPrompt, setAiPrompt] = useState('');
@@ -76,95 +77,166 @@ export const Home = ({
     setAiPrompt('');
   };
 
+  // --- OMNI-SEARCH LOGIC ---
+  const isSearchActive = !!globalSearch;
+  const searchLower = globalSearch?.toLowerCase() || '';
+
+  // Flatten all blueprints from all fields into one master array
+  const allBlueprints = Object.entries(BUSINESS_TYPES).flatMap(([fieldId, types]) =>
+    types.map(type => ({ ...type, fieldId }))
+  );
+
+  // Filter the master array by the search term
+  const searchResults = isSearchActive 
+    ? allBlueprints.filter(bp => 
+        bp.name.toLowerCase().includes(searchLower) || 
+        bp.cost.toLowerCase().includes(searchLower)
+      )
+    : [];
+
   return (
     <div className="animate-fade-in relative z-10">
-      <header className="text-center mb-12">
-        <HeroTitle />
-        <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto font-body leading-relaxed animate-enter" style={{ animationDelay: '0.8s' }}>
-          The sky's the limit. Ambition is the fuel.
-        </p>
-      </header>
+      
+      {/* If Search is active, hide the normal UI and show OMNI-SEARCH RESULTS */}
+      {isSearchActive ? (
+        <div className="max-w-6xl mx-auto animate-slide-up pb-20">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 font-display">Search Results</h2>
+            <p className="text-slate-500 font-body mt-1">Found {searchResults.length} missions matching "{globalSearch}" across all fields.</p>
+          </div>
 
-      {!selectedField && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
-          {BUSINESS_FIELDS.map((field) => (
-            <FeatureCard key={field.id} icon={field.icon} title={field.name} desc={field.desc} color={field.color} onClick={() => setSelectedField(field)} />
-          ))}
-        </div>
-      )}
-
-      {!selectedField && (
-        <div className="max-w-6xl mx-auto mb-12 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* AI Architect Card - Amber Theme */}
-            <button onClick={() => setIsAiModalOpen(true)} className="flex-1 bg-white/80 backdrop-blur-xl border border-amber-200/60 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all group text-left relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-              <div className="relative z-10 flex justify-between items-center">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sparkles className="text-amber-600" size={20} />
-                    <h3 className="text-lg font-bold text-slate-900 font-display">AI Architect</h3>
-                  </div>
-                  <p className="text-slate-600 text-sm font-body">Have a unique idea? Generate a custom blueprint.</p>
-                </div>
-                <div className="bg-amber-100 p-3 rounded-full text-amber-600 group-hover:scale-110 transition-transform"><Bot size={24} /></div>
-              </div>
-            </button>
-
-            {/* Founder DNA Card - Amber Theme */}
-            <button onClick={() => setIsQuizOpen(true)} className="flex-1 bg-white/80 backdrop-blur-xl border border-amber-200/60 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all group text-left relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
-              <div className="relative z-10 flex justify-between items-center">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <BrainCircuit className="text-orange-600" size={20} />
-                    <h3 className="text-lg font-bold text-slate-900 font-display">Founder DNA</h3>
-                    <div className="relative">
-                      <div onClick={(e) => { e.stopPropagation(); setShowDnaTooltip(!showDnaTooltip); }} className="cursor-pointer text-amber-400 hover:text-orange-600 transition-colors p-1 rounded-full hover:bg-amber-50"><Info size={14} /></div>
-                      {showDnaTooltip && (
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-800 text-white text-xs p-3 rounded-lg shadow-xl z-50 animate-in fade-in zoom-in-95 cursor-auto">
-                          <p>Learn where you may excel!</p>
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-800"></div>
-                        </div>
-                      )}
+          {searchResults.length === 0 ? (
+            <div className="text-center py-20 bg-white/40 backdrop-blur-md rounded-3xl border border-dashed border-slate-300">
+              <Search size={48} className="mx-auto text-slate-300 mb-4" />
+              <h3 className="text-xl font-bold text-slate-700 font-display">No missions found</h3>
+              <p className="text-slate-500 font-body">Try searching for a different industry or keyword.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {searchResults.map((type) => {
+                const isSaved = savedMissions.includes(type.id);
+                const parentField = BUSINESS_FIELDS.find(f => f.id === type.fieldId);
+                
+                return (
+                  <div key={type.id} className={`bg-white/70 backdrop-blur-md border border-white/40 p-6 rounded-xl hover:border-cyan-500/50 transition-all group flex flex-col justify-between shadow-sm hover:shadow-md relative search-match scale-[1.02]`}>
+                    <button onClick={(e) => toggleSaveMission(e, type.id)} className={`absolute top-4 right-4 p-2 rounded-full transition-colors z-10 ${isSaved ? 'text-yellow-500 bg-yellow-50' : 'text-slate-400 hover:text-yellow-500 hover:bg-yellow-50/50'}`}>
+                      <Bookmark fill={isSaved ? 'currentColor' : 'none'} size={20} />
+                    </button>
+                    <div>
+                      <div className="flex justify-between items-start mb-2 pr-8">
+                        <h3 className="text-xl font-bold text-slate-900 font-display">{type.name}</h3>
+                      </div>
+                      <div className="mb-3">
+                         <span className="inline-block px-2 py-1 bg-slate-100 text-slate-500 text-[10px] uppercase font-bold tracking-wider rounded">
+                           {parentField?.name || type.fieldId}
+                         </span>
+                      </div>
+                      <div className="flex items-center gap-2 mb-6 text-sm text-slate-500">
+                        <DollarSign size={14} className="text-cyan-600" />
+                        <span className="font-medium text-cyan-700">Est. Cost: {type.cost}</span>
+                      </div>
                     </div>
+                    <button onClick={() => handleStartBusiness(type.id, type.fieldId, type.name)} className="w-full py-3 bg-slate-100/50 hover:bg-slate-200/50 text-slate-900 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 font-body mt-auto">
+                      Start Mission <Rocket size={16} />
+                    </button>
                   </div>
-                  <p className="text-slate-600 text-sm font-body">Take the quiz to find what business suits your strengths and resources.</p>
-                </div>
-                <div className="bg-orange-100 p-3 rounded-full text-orange-600 group-hover:scale-110 transition-transform"><Search size={24} /></div>
-              </div>
-            </button>
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
-      )}
+      ) : (
+        /* NORMAL BROWSE UI (Hidden during search) */
+        <>
+          <header className="text-center mb-12">
+            <HeroTitle />
+            <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto font-body leading-relaxed animate-enter" style={{ animationDelay: '0.8s' }}>
+              The sky's the limit. Ambition is the fuel.
+            </p>
+          </header>
 
-      {selectedField && (
-        <div className="max-w-4xl mx-auto animate-slide-up">
-          <button onClick={() => setSelectedField(null)} className="flex items-center text-slate-600 hover:text-slate-900 mb-6 transition-colors px-4 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm">
-            <ArrowLeft size={20} className="mr-2" /> Back to Fields
-          </button>
-          <div className={`bg-gradient-to-r ${selectedField.color} p-8 rounded-2xl mb-8 text-white shadow-xl bg-opacity-90 backdrop-blur-md`}>
-            <h2 className="text-3xl font-bold flex items-center gap-3 font-display">
-              {(() => { const SelectedIcon = selectedField.icon; return <SelectedIcon className="w-8 h-8" />; })()} {selectedField.name}
-            </h2>
-            <p className="opacity-90 mt-2 font-body">{selectedField.desc}</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(BUSINESS_TYPES[selectedField.id] || []).map((type) => {
-              const isSaved = savedMissions.includes(type.id);
-              return (
-                <div key={type.id} className="bg-white/70 backdrop-blur-md border border-white/40 p-6 rounded-xl hover:border-cyan-500/50 transition-all group flex flex-col justify-between shadow-sm hover:shadow-md relative">
-                  <button onClick={(e) => toggleSaveMission(e, type.id)} className={`absolute top-4 right-4 p-2 rounded-full transition-colors ${isSaved ? 'text-yellow-500 bg-yellow-50' : 'text-slate-400 hover:text-yellow-500 hover:bg-yellow-50/50'}`}><Bookmark fill={isSaved ? 'currentColor' : 'none'} size={20} /></button>
-                  <div>
-                    <div className="flex justify-between items-start mb-2 pr-8"><h3 className="text-xl font-bold text-slate-900 font-display">{type.name}</h3></div>
-                    <div className="flex items-center gap-2 mb-4 text-sm text-slate-500"><DollarSign size={14} className="text-cyan-600" /><span className="font-medium text-cyan-700">Est. Cost: {type.cost}</span></div>
+          {!selectedField && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
+              {BUSINESS_FIELDS.map((field) => (
+                <FeatureCard key={field.id} icon={field.icon} title={field.name} desc={field.desc} color={field.color} onClick={() => setSelectedField(field)} />
+              ))}
+            </div>
+          )}
+
+          {!selectedField && (
+            <div className="max-w-6xl mx-auto mb-12 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+              <div className="flex flex-col md:flex-row gap-6">
+                {/* AI Architect Card - Amber Theme */}
+                <button onClick={() => setIsAiModalOpen(true)} className="flex-1 bg-white/80 backdrop-blur-xl border border-amber-200/60 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all group text-left relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-amber-500/10 to-orange-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+                  <div className="relative z-10 flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Sparkles className="text-amber-600" size={20} />
+                        <h3 className="text-lg font-bold text-slate-900 font-display">AI Architect</h3>
+                      </div>
+                      <p className="text-slate-600 text-sm font-body">Have a unique idea? Generate a custom blueprint.</p>
+                    </div>
+                    <div className="bg-amber-100 p-3 rounded-full text-amber-600 group-hover:scale-110 transition-transform"><Bot size={24} /></div>
                   </div>
-                  <button onClick={() => handleStartBusiness(type.id, selectedField.id, type.name)} className="w-full py-3 bg-slate-100/50 hover:bg-slate-200/50 text-slate-900 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 font-body">Start Mission <Rocket size={16} /></button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+                </button>
+
+                {/* Founder DNA Card - Amber Theme */}
+                <button onClick={() => setIsQuizOpen(true)} className="flex-1 bg-white/80 backdrop-blur-xl border border-amber-200/60 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all group text-left relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 to-yellow-500/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"></div>
+                  <div className="relative z-10 flex justify-between items-center">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <BrainCircuit className="text-orange-600" size={20} />
+                        <h3 className="text-lg font-bold text-slate-900 font-display">Founder DNA</h3>
+                        <div className="relative">
+                          <div onClick={(e) => { e.stopPropagation(); setShowDnaTooltip(!showDnaTooltip); }} className="cursor-pointer text-amber-400 hover:text-orange-600 transition-colors p-1 rounded-full hover:bg-amber-50"><Info size={14} /></div>
+                          {showDnaTooltip && (
+                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-slate-800 text-white text-xs p-3 rounded-lg shadow-xl z-50 animate-in fade-in zoom-in-95 cursor-auto">
+                              <p>Learn where you may excel!</p>
+                              <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-slate-800"></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <p className="text-slate-600 text-sm font-body">Take the quiz to find what business suits your strengths and resources.</p>
+                    </div>
+                    <div className="bg-orange-100 p-3 rounded-full text-orange-600 group-hover:scale-110 transition-transform"><Search size={24} /></div>
+                  </div>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {selectedField && (
+            <div className="max-w-4xl mx-auto animate-slide-up pb-20">
+              <button onClick={() => setSelectedField(null)} className="flex items-center text-slate-600 hover:text-slate-900 mb-6 transition-colors px-4 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm">
+                <ArrowLeft size={20} className="mr-2" /> Back to Fields
+              </button>
+              <div className={`bg-gradient-to-r ${selectedField.color} p-8 rounded-2xl mb-8 text-white shadow-xl bg-opacity-90 backdrop-blur-md`}>
+                <h2 className="text-3xl font-bold flex items-center gap-3 font-display">
+                  {(() => { const SelectedIcon = selectedField.icon; return <SelectedIcon className="w-8 h-8" />; })()} {selectedField.name}
+                </h2>
+                <p className="opacity-90 mt-2 font-body">{selectedField.desc}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(BUSINESS_TYPES[selectedField.id] || []).map((type) => {
+                  const isSaved = savedMissions.includes(type.id);
+                  return (
+                    <div key={type.id} className="bg-white/70 backdrop-blur-md border border-white/40 p-6 rounded-xl hover:border-cyan-500/50 transition-all group flex flex-col justify-between shadow-sm hover:shadow-md relative">
+                      <button onClick={(e) => toggleSaveMission(e, type.id)} className={`absolute top-4 right-4 p-2 rounded-full transition-colors z-10 ${isSaved ? 'text-yellow-500 bg-yellow-50' : 'text-slate-400 hover:text-yellow-500 hover:bg-yellow-50/50'}`}><Bookmark fill={isSaved ? 'currentColor' : 'none'} size={20} /></button>
+                      <div>
+                        <div className="flex justify-between items-start mb-2 pr-8"><h3 className="text-xl font-bold text-slate-900 font-display">{type.name}</h3></div>
+                        <div className="flex items-center gap-2 mb-4 text-sm text-slate-500"><DollarSign size={14} className="text-cyan-600" /><span className="font-medium text-cyan-700">Est. Cost: {type.cost}</span></div>
+                      </div>
+                      <button onClick={() => handleStartBusiness(type.id, selectedField.id, type.name)} className="w-full py-3 bg-slate-100/50 hover:bg-slate-200/50 text-slate-900 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 font-body mt-auto">Start Mission <Rocket size={16} /></button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </>
       )}
 
       {/* AI ARCHITECT MODAL (AMBER THEME)          */}

@@ -10,7 +10,7 @@ import { BLUEPRINTS } from '../data/mockData';
 
 export const Dashboard = ({
   activeBiz,
-  activeBusinessId, // <-- ADD THIS LINE
+  activeBusinessId,
   myBusinesses,
   setActiveBusinessId,
   handleRenameBusiness,
@@ -19,11 +19,15 @@ export const Dashboard = ({
   expandedTask,
   setExpandedTask,
   events,
-  handleNav
+  handleNav,
+  globalSearch // <-- ADDED PROP
 }) => {
   const blueprint = activeBiz
     ? BLUEPRINTS[activeBiz.type] || BLUEPRINTS['default']
     : null;
+
+  const isSearchActive = !!globalSearch;
+  const searchLower = globalSearch?.toLowerCase() || '';
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in relative z-10">
@@ -70,109 +74,124 @@ export const Dashboard = ({
               )}
 
               <div className="p-6">
-                {blueprint?.stages?.map((stage, idx) => (
-                  <div key={idx} className="mb-8 last:mb-0 relative">
-                    <div className="absolute left-[11px] top-8 bottom-0 w-[2px] bg-slate-200/60 -z-0"></div>
+                {blueprint?.stages?.map((stage, idx) => {
+                  
+                  // --- TASK X-RAY FILTERING LOGIC ---
+                  const stageNameMatches = isSearchActive && stage.name.toLowerCase().includes(searchLower);
+                  
+                  const filteredTasks = stage.tasks?.filter((task) => {
+                    if (!isSearchActive) return true;
+                    const taskTitle = typeof task === 'string' ? task : task.title;
+                    const taskDetail = typeof task === 'object' ? task.detail : 'Use our AI assistant to get specific tips for this step.';
+                    return stageNameMatches || taskTitle.toLowerCase().includes(searchLower) || taskDetail.toLowerCase().includes(searchLower);
+                  });
 
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-cyan-700 flex items-center gap-2 bg-transparent inline-block pr-4 z-10 relative font-display tracking-tight">
-                        <span className="w-6 h-6 rounded-full bg-slate-100 text-cyan-700 flex items-center justify-center text-xs border border-slate-300 font-body">
-                          {idx + 1}
-                        </span>
-                        {stage.name}
-                      </h3>
-                      {stage.duration && (
-                        <div className="flex items-center gap-1.5 px-3 py-1 bg-cyan-50/50 border border-cyan-100 rounded-full text-xs font-medium text-cyan-700 font-body">
-                          <Timer size={12} />
-                          {stage.duration}
-                        </div>
-                      )}
-                    </div>
-                    <div className="space-y-3 pl-8">
-                      {stage.tasks?.map((task) => {
-                        const taskTitle =
-                          typeof task === 'string' ? task : task.title;
-                        const taskDetail =
-                          typeof task === 'object'
-                            ? task.detail
-                            : 'Use our AI assistant to get specific tips for this step.';
-                        const isDone =
-                          activeBiz.completedTasks.includes(taskTitle);
-                        const isExpanded = expandedTask === taskTitle;
+                  // Hide the entire stage if it's a search and nothing matches
+                  if (isSearchActive && (!filteredTasks || filteredTasks.length === 0)) return null;
 
-                        return (
-                          <div key={taskTitle} className="relative group">
-                            <div
-                              className={`w-full text-left p-3 rounded-lg border transition-all backdrop-blur-sm
-                                  ${
-                                    isDone
-                                      ? 'bg-green-50/60 border-green-200/60'
-                                      : 'bg-white/40 border-slate-200/60 hover:border-slate-300 hover:bg-white/60'
-                                  }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <button
-                                  onClick={() => toggleTask(taskTitle)}
-                                  className="flex items-center flex-1"
-                                >
-                                  <div
-                                    className={`mr-4 transition-colors ${
-                                      isDone
-                                        ? 'text-green-600'
-                                        : 'text-slate-400 group-hover:text-slate-600'
-                                    }`}
-                                  >
-                                    {isDone ? (
-                                      <CheckCircle2 size={22} />
-                                    ) : (
-                                      <Circle size={22} />
-                                    )}
-                                  </div>
-                                  <span
-                                    className={`${
-                                      isDone
-                                        ? 'text-slate-400 line-through'
-                                        : 'text-slate-800'
-                                    } font-body`}
-                                  >
-                                    {taskTitle}
-                                  </span>
-                                </button>
+                  return (
+                    <div key={idx} className="mb-8 last:mb-0 relative">
+                      <div className="absolute left-[11px] top-8 bottom-0 w-[2px] bg-slate-200/60 -z-0"></div>
 
-                                <button
-                                  onClick={() =>
-                                    setExpandedTask(
-                                      isExpanded ? null : taskTitle
-                                    )
-                                  }
-                                  className="p-1 text-slate-400 hover:text-cyan-600 transition-colors"
-                                >
-                                  {isExpanded ? (
-                                    <ChevronUp size={18} />
-                                  ) : (
-                                    <ChevronDown size={18} />
-                                  )}
-                                </button>
-                              </div>
-
-                              {isExpanded && (
-                                <div className="mt-3 ml-10 pt-3 border-t border-slate-100 text-sm text-slate-600 animate-slide-up font-body">
-                                  <div className="flex gap-2 items-start">
-                                    <Info
-                                      size={16}
-                                      className="mt-0.5 text-cyan-500 flex-shrink-0"
-                                    />
-                                    <p>{taskDetail}</p>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-cyan-700 flex items-center gap-2 bg-transparent inline-block pr-4 z-10 relative font-display tracking-tight">
+                          <span className="w-6 h-6 rounded-full bg-slate-100 text-cyan-700 flex items-center justify-center text-xs border border-slate-300 font-body">
+                            {idx + 1}
+                          </span>
+                          {stage.name}
+                        </h3>
+                        {stage.duration && (
+                          <div className="flex items-center gap-1.5 px-3 py-1 bg-cyan-50/50 border border-cyan-100 rounded-full text-xs font-medium text-cyan-700 font-body">
+                            <Timer size={12} />
+                            {stage.duration}
                           </div>
-                        );
-                      })}
+                        )}
+                      </div>
+                      <div className="space-y-3 pl-8">
+                        {filteredTasks?.map((task) => {
+                          const taskTitle = typeof task === 'string' ? task : task.title;
+                          const taskDetail = typeof task === 'object' ? task.detail : 'Use our AI assistant to get specific tips for this step.';
+                          const isDone = activeBiz.completedTasks.includes(taskTitle);
+                          
+                          // Search Match Checks
+                          const taskTitleMatches = isSearchActive && taskTitle.toLowerCase().includes(searchLower);
+                          const taskDetailMatches = isSearchActive && taskDetail.toLowerCase().includes(searchLower);
+                          const isTaskMatch = isSearchActive && (taskTitleMatches || taskDetailMatches);
+                          
+                          // Auto-expand if the search matches the detail text, otherwise respect normal state
+                          const isExpanded = expandedTask === taskTitle || taskDetailMatches;
+
+                          return (
+                            <div key={taskTitle} className="relative group">
+                              <div
+                                className={`w-full text-left p-3 rounded-lg border transition-all backdrop-blur-sm
+                                    ${isDone ? 'bg-green-50/60 border-green-200/60' : 'bg-white/40 border-slate-200/60 hover:border-slate-300 hover:bg-white/60'}
+                                    ${isTaskMatch ? 'search-match z-10 scale-[1.02] shadow-md' : ''}`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <button
+                                    onClick={() => toggleTask(taskTitle)}
+                                    className="flex items-center flex-1"
+                                  >
+                                    <div
+                                      className={`mr-4 transition-colors ${
+                                        isDone
+                                          ? 'text-green-600'
+                                          : 'text-slate-400 group-hover:text-slate-600'
+                                      }`}
+                                    >
+                                      {isDone ? (
+                                        <CheckCircle2 size={22} />
+                                      ) : (
+                                        <Circle size={22} />
+                                      )}
+                                    </div>
+                                    <span
+                                      className={`${
+                                        isDone
+                                          ? 'text-slate-400 line-through'
+                                          : 'text-slate-800'
+                                      } font-body`}
+                                    >
+                                      {taskTitle}
+                                    </span>
+                                  </button>
+
+                                  <button
+                                    onClick={() =>
+                                      setExpandedTask(
+                                        expandedTask === taskTitle ? null : taskTitle
+                                      )
+                                    }
+                                    className="p-1 text-slate-400 hover:text-cyan-600 transition-colors"
+                                  >
+                                    {isExpanded ? (
+                                      <ChevronUp size={18} />
+                                    ) : (
+                                      <ChevronDown size={18} />
+                                    )}
+                                  </button>
+                                </div>
+
+                                {isExpanded && (
+                                  <div className="mt-3 ml-10 pt-3 border-t border-slate-100 text-sm text-slate-600 animate-slide-up font-body">
+                                    <div className="flex gap-2 items-start">
+                                      <Info
+                                        size={16}
+                                        className="mt-0.5 text-cyan-500 flex-shrink-0"
+                                      />
+                                      <p>{taskDetail}</p>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 pb-6">
@@ -183,19 +202,22 @@ export const Dashboard = ({
                       Vocabulary
                     </h3>
                     <div className="space-y-3">
-                      {blueprint.terms.map((item, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white/60 p-3 rounded-lg border border-slate-200/50 hover:border-slate-300 transition-colors shadow-sm"
-                        >
-                          <span className="text-cyan-700 font-bold block mb-1 text-xs uppercase tracking-wide font-body">
-                            {item.term}
-                          </span>
-                          <span className="text-slate-600 text-xs leading-relaxed font-body">
-                            {item.def}
-                          </span>
-                        </div>
-                      ))}
+                      {blueprint.terms.map((item, idx) => {
+                        const isTermMatch = isSearchActive && (item.term.toLowerCase().includes(searchLower) || item.def.toLowerCase().includes(searchLower));
+                        return (
+                          <div
+                            key={idx}
+                            className={`bg-white/60 p-3 rounded-lg border border-slate-200/50 hover:border-slate-300 transition-all shadow-sm ${isTermMatch ? 'search-match scale-[1.02]' : ''}`}
+                          >
+                            <span className="text-cyan-700 font-bold block mb-1 text-xs uppercase tracking-wide font-body">
+                              {item.term}
+                            </span>
+                            <span className="text-slate-600 text-xs leading-relaxed font-body">
+                              {item.def}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -208,29 +230,32 @@ export const Dashboard = ({
                         Funding & Grants
                       </h3>
                       <div className="space-y-3">
-                        {blueprint.funding.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-start justify-between bg-white/60 p-3 rounded-lg border border-slate-200/50 shadow-sm"
-                          >
-                            <div>
-                              <span className="text-slate-900 font-medium text-sm block font-body">
-                                {item.title}
-                              </span>
-                              <span className="text-slate-500 text-xs font-body">
-                                {item.desc}
-                              </span>
+                        {blueprint.funding.map((item, idx) => {
+                           const isFundingMatch = isSearchActive && (item.title.toLowerCase().includes(searchLower) || item.desc.toLowerCase().includes(searchLower));
+                           return (
+                            <div
+                              key={idx}
+                              className={`flex items-start justify-between bg-white/60 p-3 rounded-lg border border-slate-200/50 shadow-sm transition-all ${isFundingMatch ? 'search-match scale-[1.02]' : ''}`}
+                            >
+                              <div>
+                                <span className="text-slate-900 font-medium text-sm block font-body">
+                                  {item.title}
+                                </span>
+                                <span className="text-slate-500 text-xs font-body">
+                                  {item.desc}
+                                </span>
+                              </div>
+                              <div className="text-right">
+                                <span className="block text-green-600 font-bold text-xs font-body">
+                                  {item.amount}
+                                </span>
+                                <span className="text-slate-400 text-[10px] uppercase font-body">
+                                  {item.type}
+                                </span>
+                              </div>
                             </div>
-                            <div className="text-right">
-                              <span className="block text-green-600 font-bold text-xs font-body">
-                                {item.amount}
-                              </span>
-                              <span className="text-slate-400 text-[10px] uppercase font-body">
-                                {item.type}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -242,27 +267,30 @@ export const Dashboard = ({
                         Recommended Stack
                       </h3>
                       <div className="grid grid-cols-2 gap-3">
-                        {blueprint.tools.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="bg-white/60 p-3 rounded-lg border border-slate-200/50 shadow-sm flex flex-col"
-                          >
-                            <span className="text-slate-900 font-medium text-sm font-body">
-                              {item.name}
-                            </span>
-                            <span className="text-slate-500 text-xs mb-2 font-body">
-                              {item.desc}
-                            </span>
-                            <a
-                              href={`https://${item.link}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="mt-auto text-xs text-cyan-600 hover:underline font-body"
+                        {blueprint.tools.map((item, idx) => {
+                          const isToolMatch = isSearchActive && (item.name.toLowerCase().includes(searchLower) || item.desc.toLowerCase().includes(searchLower));
+                          return (
+                            <div
+                              key={idx}
+                              className={`bg-white/60 p-3 rounded-lg border border-slate-200/50 shadow-sm flex flex-col transition-all ${isToolMatch ? 'search-match scale-[1.02]' : ''}`}
                             >
-                              Visit Site &rarr;
-                            </a>
-                          </div>
-                        ))}
+                              <span className="text-slate-900 font-medium text-sm font-body">
+                                {item.name}
+                              </span>
+                              <span className="text-slate-500 text-xs mb-2 font-body">
+                                {item.desc}
+                              </span>
+                              <a
+                                href={`https://${item.link}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="mt-auto text-xs text-cyan-600 hover:underline font-body"
+                              >
+                                Visit Site &rarr;
+                              </a>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}

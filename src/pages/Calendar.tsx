@@ -1,7 +1,13 @@
+// src/pages/Calendar.tsx
 import React from 'react';
 import { ChevronDown, Plus, Trash2, X, Video } from 'lucide-react';
 
-export const Calendar = ({ currentDate, setCurrentDate, events, isEventFormOpen, setIsEventFormOpen, editingEventId, newEventForm, setNewEventForm, handleAddEvent, handleDeleteEvent, startEditing, saveEdit, getDaysInMonth, handlePrevMonth, handleNextMonth, formatLocalDate, getEventColor }) => {
+export const Calendar = ({ 
+  currentDate, setCurrentDate, events, isEventFormOpen, setIsEventFormOpen, 
+  editingEventId, newEventForm, setNewEventForm, handleAddEvent, 
+  handleDeleteEvent, startEditing, saveEdit, getDaysInMonth, handlePrevMonth, 
+  handleNextMonth, formatLocalDate, getEventColor, globalSearch // <-- ADDED PROP
+}) => {
   const days = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const firstDayIndex = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
@@ -32,15 +38,38 @@ export const Calendar = ({ currentDate, setCurrentDate, events, isEventFormOpen,
           const dateStr = formatLocalDate(day);
           const isToday = dateStr === formatLocalDate(new Date());
           const dayEvents = events.filter((e) => e.date === dateStr);
+          
           return (
             <div key={idx} className={`min-h-[120px] bg-white/60 backdrop-blur-md border border-white/50 rounded-xl p-3 flex flex-col gap-2 hover:shadow-md transition-shadow ${isToday ? 'ring-2 ring-indigo-400 ring-offset-2 bg-indigo-50/50' : ''}`}>
               <div className={`text-right font-bold text-sm mb-1 ${isToday ? 'text-indigo-600' : 'text-slate-400'}`}>{day.getDate()}</div>
-              {dayEvents.map((evt) => (
-                <button key={evt.id} onClick={() => startEditing(evt)} className={`text-left text-xs p-2 rounded-lg border transition-all hover:scale-[1.02] shadow-sm font-body ${getEventColor(evt.type)}`}>
-                  <div className="font-bold truncate">{evt.title}</div>
-                  <div className="opacity-80 text-[10px]">{evt.time}</div>
-                </button>
-              ))}
+              
+              {dayEvents.map((evt) => {
+                // --- SAFE GLOBAL SEARCH LOGIC FOR CALENDAR EVENTS ---
+                const isSearchActive = !!globalSearch;
+                const isMatch = isSearchActive && (
+                  evt.title?.toLowerCase().includes(globalSearch.toLowerCase()) || 
+                  evt.type?.toLowerCase().includes(globalSearch.toLowerCase())
+                );
+                
+                // If searching, fade out non-matches and apply glow to matches
+                let searchClasses = '';
+                if (isSearchActive) {
+                  searchClasses = isMatch 
+                    ? 'search-match z-10 scale-105' 
+                    : 'opacity-20 grayscale pointer-events-none';
+                }
+
+                return (
+                  <button 
+                    key={evt.id} 
+                    onClick={() => startEditing(evt)} 
+                    className={`text-left text-xs p-2 rounded-lg border transition-all hover:scale-[1.02] shadow-sm font-body relative ${getEventColor(evt.type)} ${searchClasses}`}
+                  >
+                    <div className="font-bold truncate">{evt.title}</div>
+                    <div className="opacity-80 text-[10px]">{evt.time}</div>
+                  </button>
+                );
+              })}
             </div>
           );
         })}

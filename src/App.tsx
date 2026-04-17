@@ -7,11 +7,13 @@ import {
   LayoutDashboard,
   X,
   Check,
+  CheckCircle2,
   User,
   Bell,
   Clock,
   CalendarCheck,
-  Medal
+  Medal,
+  Search
 } from 'lucide-react';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -96,14 +98,18 @@ const FOUNDER_QUIZ = [
 // --- Main App Component ---
 
 export default function AccelerateApp() {
-  const [accessibility, setAccessibility] = useState({
-    highContrast: false,
-    reduceMotion: false,
-    dyslexicFont: false,
-    darkMode: false
+  const [accessibility, setAccessibility] = useState(() => {
+    const saved = localStorage.getItem('acc_accessibility');
+    return saved ? JSON.parse(saved) : {
+      highContrast: false,
+      reduceMotion: false,
+      dyslexicFont: false,
+      darkMode: false
+    };
   });
   const [hasEnteredApp, setHasEnteredApp] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [globalSearch, setGlobalSearch] = useState('');
   const [viewingUserId, setViewingUserId] = useState('me');
   const [selectedField, setSelectedField] = useState(null);
   const [expandedTask, setExpandedTask] = useState(null);
@@ -113,8 +119,16 @@ export default function AccelerateApp() {
   const [expandedMentorId, setExpandedMentorId] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const [myBusinesses, setMyBusinesses] = useState([]);
-  const [savedMissions, setSavedMissions] = useState([]);
+  const [myBusinesses, setMyBusinesses] = useState(() => {
+    const saved = localStorage.getItem('acc_my_businesses');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [savedMissions, setSavedMissions] = useState(() => {
+    const saved = localStorage.getItem('acc_saved_missions');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [expandedSavedMission, setExpandedSavedMission] = useState(null);
 
   const [events, setEvents] = useState([
@@ -139,7 +153,32 @@ export default function AccelerateApp() {
   const [posts, setPosts] = useState(INITIAL_POSTS || []);
   const [activeCommunityId, setActiveCommunityId] = useState('all');
 
-  const [userProfile, setUserProfile] = useState(INITIAL_PROFILE || {});
+  const [savedResources, setSavedResources] = useState(() => {
+    const saved = localStorage.getItem('acc_saved_resources');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [userProfile, setUserProfile] = useState(() => {
+    const saved = localStorage.getItem('acc_user_profile');
+    if (saved) {
+      const parsedProfile = JSON.parse(saved);
+      
+      if (parsedProfile.badges) {
+        parsedProfile.badges = parsedProfile.badges.map(badge => {
+          let IconComponent = Medal; // Default fallback
+          
+          if (badge.name === 'First Launch') IconComponent = Rocket;
+          if (badge.name === 'Verified') IconComponent = CheckCircle2;
+          if (badge.name === 'Early Adopter') IconComponent = Medal;
+          
+          return { ...badge, icon: IconComponent };
+        });
+      }
+      return parsedProfile;
+    }
+    return INITIAL_PROFILE || {};
+  });
+
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [tempProfile, setTempProfile] = useState(INITIAL_PROFILE || {});
 
@@ -162,6 +201,35 @@ export default function AccelerateApp() {
   const [quizStep, setQuizStep] = useState(0);
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizResult, setQuizResult] = useState(null);
+
+  // --- DATA PERSISTENCE ENGINE ---
+  // Syncs app state to localStorage whenever key data changes
+  React.useEffect(() => {
+    localStorage.setItem('acc_accessibility', JSON.stringify(accessibility));
+  }, [accessibility]);
+
+  React.useEffect(() => {
+    localStorage.setItem('acc_my_businesses', JSON.stringify(myBusinesses));
+  }, [myBusinesses]);
+
+  React.useEffect(() => {
+    localStorage.setItem('acc_saved_missions', JSON.stringify(savedMissions));
+  }, [savedMissions]);
+
+  React.useEffect(() => {
+    localStorage.setItem('acc_saved_resources', JSON.stringify(savedResources));
+  }, [savedResources]);
+
+  React.useEffect(() => {
+    localStorage.setItem('acc_user_profile', JSON.stringify(userProfile));
+  }, [userProfile]);
+
+  const resetApp = () => {
+    if (window.confirm("Are you sure? This will delete all your missions and profile data.")) {
+      localStorage.clear();
+      window.location.reload(); // Refresh to reset all states to defaults
+    }
+  };
 
   const handleQuizAnswer = (value) => {
     const currentQ = FOUNDER_QUIZ[quizStep];
@@ -255,23 +323,15 @@ export default function AccelerateApp() {
 
   const handleNav = (tabId) => {
     startTransition(() => {
-      if (tabId === 'profile') {
-        setViewingUserId('me');
-      }
-      
+      if (tabId === 'profile') setViewingUserId('me');
       setActiveTab(tabId);
+      setGlobalSearch(''); 
       
-      // Target the new main scroll container instead of the window
       const mainContainer = document.getElementById('main-scroll-container');
-      if (mainContainer) {
-        mainContainer.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+      if (mainContainer) mainContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      else window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   };
-
-  const [savedResources, setSavedResources] = useState([]);
 
   // Function to add or remove a resource from the backpack
   const toggleSaveResource = (resourceObj) => {
@@ -787,6 +847,8 @@ export default function AccelerateApp() {
     addToast('Profile updated successfully', 'success');
   };
 
+  
+
   const handleAvatarChange = () => {
     const newUrl = window.prompt(
       'Enter an image URL for your new profile picture (e.g., a link from Imgur or Unsplash):'
@@ -838,6 +900,17 @@ export default function AccelerateApp() {
       ${accessibility.dyslexicFont ? 'font-serif tracking-wide' : 'font-sans'}
     `}>
       <style>{`
+        @keyframes search-match-pulse {
+          0%, 100% { box-shadow: 0 0 0 2px rgba(99,102,241,1), 0 0 20px rgba(99,102,241,0.4); }
+          50% { box-shadow: 0 0 0 2px rgba(129,140,248,1), 0 0 35px rgba(129,140,248,0.7); }
+        }
+        .search-match {
+          animation: search-match-pulse 2s infinite alternate !important;
+          border-color: rgba(99,102,241,0.8) !important;
+          transform: translateY(-2px) scale(1.01);
+          transition: transform 0.3s ease;
+          z-index: 10;
+        }
         @keyframes float-y {
           0%, 100% { transform: translateY(0px) scale(1); }
           50% { transform: translateY(-80px) scale(1.05); }
@@ -1001,14 +1074,27 @@ export default function AccelerateApp() {
 
           <main id="main-scroll-container" className="flex-1 md:ml-64 h-screen overflow-y-auto relative z-10 pb-20 md:pb-0">
             <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
-              {/* CHANGED: This header logic now says 'Saved' instead of 'Saved Missions' */}
-              <h1 className="text-xl font-bold text-slate-800 capitalize font-display">
-                {activeTab === 'home'
-                  ? 'Browse Missions'
-                  : activeTab === 'saved'
-                  ? 'Saved'
-                  : activeTab}
-              </h1>
+              {/* --- DYNAMIC GLOBAL SEARCH BAR --- */}
+              <div className="flex-1 max-w-lg relative group">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Search size={18} className="text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                </div>
+                <input
+                  type="text"
+                  placeholder={`Search ${activeTab === 'home' ? 'browse' : activeTab}...`}
+                  value={globalSearch}
+                  onChange={(e) => setGlobalSearch(e.target.value)}
+                  className="w-full bg-slate-100/50 hover:bg-slate-100 focus:bg-white border border-slate-200/50 focus:border-indigo-500 text-slate-900 rounded-full py-2.5 pl-11 pr-10 shadow-sm focus:shadow-md transition-all outline-none font-body text-sm"
+                />
+                {globalSearch && (
+                  <button 
+                    onClick={() => setGlobalSearch('')} 
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
 
               <div className="flex items-center gap-4">
                 <div className="relative">
@@ -1110,6 +1196,7 @@ export default function AccelerateApp() {
                     resetQuiz={resetQuiz}
                     showDnaTooltip={showDnaTooltip}
                     setShowDnaTooltip={setShowDnaTooltip}
+                    globalSearch={globalSearch}
                   />
                 )}
                 {activeTab === 'dashboard' && (
@@ -1125,6 +1212,7 @@ export default function AccelerateApp() {
                     setExpandedTask={setExpandedTask}
                     events={events}
                     handleNav={handleNav}
+                    globalSearch={globalSearch}
                   />
                 )}
                 {activeTab === 'community' && (
@@ -1146,6 +1234,7 @@ export default function AccelerateApp() {
                     toggleLikePost={toggleLikePost}
                     handleSharePost={handleSharePost}
                     handleCreatePost={handleCreatePost}
+                    globalSearch={globalSearch}
                   />
                 )}
                 
@@ -1155,10 +1244,10 @@ export default function AccelerateApp() {
                     addToast={addToast} 
                     savedResources={savedResources} 
                     toggleSaveResource={toggleSaveResource} 
+                    globalSearch={globalSearch}
                   />
                 )}
 
-                {/* CHANGED: Rendering the new Saved component instead of SavedMissions */}
                 {activeTab === 'saved' && (
                   <Saved
                     savedMissions={savedMissions}
@@ -1171,6 +1260,7 @@ export default function AccelerateApp() {
                     toggleSaveMission={toggleSaveMission}
                     expandedSavedMission={expandedSavedMission}
                     setExpandedSavedMission={setExpandedSavedMission}
+                    globalSearch={globalSearch}
                   />
                 )}
                 
@@ -1195,6 +1285,7 @@ export default function AccelerateApp() {
                     handleNextMonth={handleNextMonth}
                     formatLocalDate={formatLocalDate}
                     getEventColor={getEventColor}
+                    globalSearch={globalSearch}
                   />
                 )}
                 {activeTab === 'profile' && (
@@ -1213,6 +1304,7 @@ export default function AccelerateApp() {
                     getAvatar={getAvatar}
                     myBusinesses={myBusinesses}
                     isChallengeComplete={isChallengeComplete}
+                    globalSearch={globalSearch}
                   />
                 )}
                 {activeTab === 'mentors' && (
@@ -1222,16 +1314,23 @@ export default function AccelerateApp() {
                     setExpandedMentorId={setExpandedMentorId}
                     openBookingModal={openBookingModal}               
                     accessibility={accessibility}
+                    globalSearch={globalSearch}
                   />
                 )}
                 {activeTab === 'settings' && (
                   <Settings 
                     accessibility={accessibility} 
                     setAccessibility={setAccessibility} 
-                    addToast={addToast} 
+                    addToast={addToast}
+                    onReset={resetApp} 
+                    globalSearch={globalSearch}
                   />
                 )}
-                {activeTab === 'about' && <About />}
+                {activeTab === 'about' && (
+                  <About 
+                    globalSearch={globalSearch}
+                  />
+                )}
               </div>
             </div>
           </main>

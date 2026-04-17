@@ -3,7 +3,12 @@ import React from 'react';
 import { ArrowLeft, Camera, Edit2, User, Mail, Linkedin, Globe as GlobeIcon, Phone, Award, Rocket, CheckCircle2 } from 'lucide-react';
 import { CountUp } from '../components/CountUp';
 
-export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingProfile, setIsEditingProfile, tempProfile, setTempProfile, handleAvatarChange, saveProfile, startEditingProfile, setActiveTab, getAvatar, myBusinesses, isChallengeComplete }) => {
+export const Profile = ({ 
+  viewingUserId, userProfile, communityUsers, isEditingProfile, 
+  setIsEditingProfile, tempProfile, setTempProfile, handleAvatarChange, 
+  saveProfile, startEditingProfile, setActiveTab, getAvatar, 
+  myBusinesses, isChallengeComplete, globalSearch // <-- ADDED PROP
+}) => {
   const isOwnProfile = viewingUserId === 'me';
   let displayProfile = userProfile;
   
@@ -25,22 +30,35 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
           email: `${handle}@accelerate.network`, 
           linkedin: `linkedin.com/in/${handle}`, 
           website: `www.${handle}.dev`, 
-          // Generates a consistent but fake phone number
           phone: `+1 (555) ${Math.floor(100 + Math.random() * 900)}-${Math.floor(1000 + Math.random() * 9000)}`
         },
       };
     }
   }
 
+  // --- SAFE GLOBAL SEARCH FILTERING (SPOTLIGHT EFFECT) ---
+  // Disable search effects while the user is actively editing their profile
+  const isSearchActive = !!globalSearch && !isEditingProfile;
+  const searchLower = globalSearch?.toLowerCase() || '';
+
+  const matchBio = isSearchActive && (
+    displayProfile.bio?.toLowerCase().includes(searchLower) || 
+    displayProfile.headline?.toLowerCase().includes(searchLower)
+  );
+  const matchEmail = isSearchActive && displayProfile.contact?.email?.toLowerCase().includes(searchLower);
+  const matchLinkedin = isSearchActive && displayProfile.contact?.linkedin?.toLowerCase().includes(searchLower);
+  const matchWebsite = isSearchActive && displayProfile.contact?.website?.toLowerCase().includes(searchLower);
+  const matchPhone = isSearchActive && displayProfile.contact?.phone?.toLowerCase().includes(searchLower);
+
   return (
-    <div className="max-w-5xl mx-auto animate-fade-in relative z-10">
+    <div className="max-w-5xl mx-auto animate-fade-in relative z-10 pb-20">
       {!isOwnProfile && (
         <button onClick={() => setActiveTab('community')} className="flex items-center text-slate-600 hover:text-slate-900 mb-6 transition-colors px-4 py-2 rounded-lg hover:bg-white/50 backdrop-blur-sm">
           <ArrowLeft size={20} className="mr-2" /> Back to Community
         </button>
       )}
 
-      <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl p-8 shadow-sm mb-6 flex flex-col md:flex-row items-center md:items-start gap-8">
+      <div className={`bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl p-8 shadow-sm mb-6 flex flex-col md:flex-row items-center md:items-start gap-8 transition-all ${matchBio ? 'search-match scale-[1.01]' : ''}`}>
         <div className="relative flex-shrink-0">
           <div className="w-32 h-32 rounded-full border-4 border-white bg-slate-200 overflow-hidden shadow-lg">
             <img src={getAvatar(isEditingProfile ? tempProfile.avatarSeed : displayProfile.avatarSeed)} alt="Profile" className="w-full h-full object-cover" />
@@ -54,7 +72,7 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
 
         <div className="flex-1 text-center md:text-left w-full">
           {isOwnProfile && isEditingProfile ? (
-            <div className="space-y-4 w-full max-w-lg">
+            <div className="space-y-4 w-full max-w-lg animate-in fade-in">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input type="text" value={tempProfile.name} onChange={(e) => setTempProfile({ ...tempProfile, name: e.target.value })} className="w-full text-xl font-bold bg-white/50 border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-900" placeholder="Name" />
                 <input type="text" value={tempProfile.role} onChange={(e) => setTempProfile({ ...tempProfile, role: e.target.value })} className="w-full text-sm text-slate-700 bg-white/50 border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Role" />
@@ -88,24 +106,23 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm text-center">
+            <div className={`bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm text-center transition-opacity ${isSearchActive ? 'opacity-40' : ''}`}>
               <div className="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-2"><Rocket size={20} /></div>
               <div className="text-2xl font-bold text-slate-900 font-display"><CountUp end={isOwnProfile ? myBusinesses.length : 2} /></div>
               <div className="text-xs text-slate-500 uppercase tracking-wide font-body font-semibold">Ventures</div>
             </div>
-            <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm text-center">
+            <div className={`bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm text-center transition-opacity ${isSearchActive ? 'opacity-40' : ''}`}>
               <div className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-2"><Award size={20} /></div>
               <div className="text-2xl font-bold text-slate-900 font-display"><CountUp end={displayProfile.badges.length} /></div>
               <div className="text-xs text-slate-500 uppercase tracking-wide font-body font-semibold">Badges</div>
             </div>
-            <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm text-center">
+            <div className={`bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm text-center transition-opacity ${isSearchActive ? 'opacity-40' : ''}`}>
               <div className="w-10 h-10 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-2"><CheckCircle2 size={20} /></div>
               <div className="text-2xl font-bold text-slate-900 font-display"><CountUp end={isOwnProfile && isChallengeComplete ? 1 : 0} /></div>
               <div className="text-xs text-slate-500 uppercase tracking-wide font-body font-semibold">Wins</div>
             </div>
           </div>
 
-          {/* MISSING CONTACT INFO RESTORED */}
           <div className={`bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-6 shadow-sm transition-all ${isEditingProfile ? 'ring-2 ring-indigo-500/20 bg-white/80' : ''}`}>
             <h3 className="font-bold text-slate-900 mb-4 font-display flex items-center gap-2">
               <User size={20} className={isEditingProfile ? 'text-indigo-600' : 'text-slate-400'} />
@@ -113,7 +130,7 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Email */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100">
+              <div className={`flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100 transition-all ${matchEmail ? 'search-match scale-[1.02] z-10' : isSearchActive ? 'opacity-40' : ''}`}>
                 <div className="p-2 bg-slate-100 text-slate-600 rounded-full"><Mail size={16} /></div>
                 <div className="flex-1 min-w-0">
                   <span className="block text-xs text-slate-400 font-body uppercase tracking-wider">Email</span>
@@ -125,7 +142,7 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
                 </div>
               </div>
               {/* LinkedIn */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100">
+              <div className={`flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100 transition-all ${matchLinkedin ? 'search-match scale-[1.02] z-10' : isSearchActive ? 'opacity-40' : ''}`}>
                 <div className="p-2 bg-blue-100 text-blue-600 rounded-full"><Linkedin size={16} /></div>
                 <div className="flex-1 min-w-0">
                   <span className="block text-xs text-slate-400 font-body uppercase tracking-wider">LinkedIn</span>
@@ -137,7 +154,7 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
                 </div>
               </div>
               {/* Website */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100">
+              <div className={`flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100 transition-all ${matchWebsite ? 'search-match scale-[1.02] z-10' : isSearchActive ? 'opacity-40' : ''}`}>
                 <div className="p-2 bg-purple-100 text-purple-600 rounded-full"><GlobeIcon size={16} /></div>
                 <div className="flex-1 min-w-0">
                   <span className="block text-xs text-slate-400 font-body uppercase tracking-wider">Website</span>
@@ -149,7 +166,7 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
                 </div>
               </div>
               {/* Phone */}
-              <div className="flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100">
+              <div className={`flex items-center gap-3 p-3 bg-white/50 rounded-lg border border-slate-100 transition-all ${matchPhone ? 'search-match scale-[1.02] z-10' : isSearchActive ? 'opacity-40' : ''}`}>
                 <div className="p-2 bg-green-100 text-green-600 rounded-full"><Phone size={16} /></div>
                 <div className="flex-1 min-w-0">
                   <span className="block text-xs text-slate-400 font-body uppercase tracking-wider">Phone</span>
@@ -162,7 +179,6 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
               </div>
             </div>
           </div>
-
         </div>
 
         <div className="space-y-6">
@@ -172,19 +188,22 @@ export const Profile = ({ viewingUserId, userProfile, communityUsers, isEditingP
               <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded-full font-body">{displayProfile.badges.length}</span>
             </h3>
             <div className="grid grid-cols-1 gap-3">
-              {displayProfile.badges.map((badge) => (
-                <div key={badge.id} className="bg-white p-3 rounded-xl flex items-center gap-3 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
-                  <div className={`w-10 h-10 rounded-full ${badge.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
-                    <badge.icon size={18} />
+              {displayProfile.badges.map((badge) => {
+                const matchBadge = isSearchActive && badge.name.toLowerCase().includes(searchLower);
+                return (
+                  <div key={badge.id} className={`bg-white p-3 rounded-xl flex items-center gap-3 border border-slate-100 shadow-sm transition-all group ${matchBadge ? 'search-match scale-[1.02] z-10' : isSearchActive ? 'opacity-40' : 'hover:shadow-md'}`}>
+                    <div className={`w-10 h-10 rounded-full ${badge.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                      <badge.icon size={18} />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold text-slate-800 font-body block">{badge.name}</span>
+                      <span className="text-xs text-slate-400 font-body">Earned Nov 2025</span>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-sm font-bold text-slate-800 font-body block">{badge.name}</span>
-                    <span className="text-xs text-slate-400 font-body">Earned Nov 2025</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
               {[1, 2, 3].map((i) => (
-                <div key={`locked-${i}`} className="bg-slate-50 p-3 rounded-xl flex items-center gap-3 border border-dashed border-slate-200 opacity-60">
+                <div key={`locked-${i}`} className={`bg-slate-50 p-3 rounded-xl flex items-center gap-3 border border-dashed border-slate-200 transition-opacity ${isSearchActive ? 'opacity-20' : 'opacity-60'}`}>
                   <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center flex-shrink-0"><Award size={18} className="text-slate-400" /></div>
                   <span className="text-xs font-medium text-slate-400 font-body">Locked Badge</span>
                 </div>

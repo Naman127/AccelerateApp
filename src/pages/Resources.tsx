@@ -22,9 +22,8 @@ import {
 import { RESOURCES } from '../data/mockData';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-export const Resources = ({ addToast, savedResources = [], toggleSaveResource }) => {
+export const Resources = ({ addToast, savedResources = [], toggleSaveResource, globalSearch }) => {
   const [resourceTab, setResourceTab] = useState('materials');
-  const [resourceSearch, setResourceSearch] = useState('');
   const [downloadingIds, setDownloadingIds] = useState({});
 
   // AI Pitch Analyzer State
@@ -60,6 +59,12 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizSelection, setQuizSelection] = useState(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+
+  const INTERACTIVE_TOOLS = [
+    { id: 'ltvcac', title: 'Unit Economics Health Check', desc: 'Audit your startup\'s sustainability by comparing LTV to CAC.', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-100', border: 'hover:border-emerald-300' },
+    { id: 'breakeven', title: 'Advanced Break-Even Calculator', desc: 'Determine exact sales targets required to cover detailed fixed costs.', icon: Calculator, color: 'text-amber-600', bg: 'bg-amber-100', border: 'hover:border-amber-300' },
+    { id: 'pitch', title: 'Pitch Deck Analyzer', desc: 'Get quick, AI-powered feedback on your elevator pitch structure.', icon: Sparkles, color: 'text-indigo-600', bg: 'bg-indigo-100', border: 'hover:border-indigo-300' }
+  ];
 
   const MINI_LESSONS = [
     { 
@@ -124,16 +129,34 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
     }
   ];
 
+  // --- SAFE GLOBAL SEARCH FILTERING ---
   const categories = [...new Set(RESOURCES.map((r) => r.category))];
-  const filteredResources = RESOURCES.filter(
-    (res) => (res.title || '').toLowerCase().includes(resourceSearch.toLowerCase()) || (res.category || '').toLowerCase().includes(resourceSearch.toLowerCase())
+  
+  const filteredMaterials = RESOURCES.filter(
+    (res) =>
+      !globalSearch || 
+      res.title?.toLowerCase().includes(globalSearch.toLowerCase()) ||
+      res.author?.toLowerCase().includes(globalSearch.toLowerCase()) ||
+      res.category?.toLowerCase().includes(globalSearch.toLowerCase())
+  );
+
+  const filteredTools = INTERACTIVE_TOOLS.filter(
+    (tool) =>
+      !globalSearch || 
+      tool.title?.toLowerCase().includes(globalSearch.toLowerCase()) ||
+      tool.desc?.toLowerCase().includes(globalSearch.toLowerCase())
+  );
+
+  const filteredLessons = MINI_LESSONS.filter(
+    (lesson) =>
+      !globalSearch || 
+      lesson.title?.toLowerCase().includes(globalSearch.toLowerCase())
   );
 
   const isSaved = (id) => savedResources.some(r => r.id === id);
 
-  // FIXED: Single toast with inline loading state
   const handleDownloadResource = (res) => {
-    if (downloadingIds[res.id]) return; // Prevent multiple clicks
+    if (downloadingIds[res.id]) return; 
     setDownloadingIds(prev => ({ ...prev, [res.id]: true }));
     setTimeout(() => {
       setDownloadingIds(prev => ({ ...prev, [res.id]: false }));
@@ -159,7 +182,6 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
       
       await new Promise(resolve => setTimeout(resolve, 2500));
 
-      // HARDCODED FALLBACK FEEDBACK
       const fallbackFeedback = {
         score: 82,
         tips: [
@@ -171,17 +193,9 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
       
       setPitchFeedback(fallbackFeedback);
       setIsAnalyzing(false);
-      
-      // FAKE SUCCESS TOAST
       addToast('Pitch analyzed successfully!', 'success');
     }
   };
-
-  const INTERACTIVE_TOOLS = [
-    { id: 'ltvcac', title: 'Unit Economics Health Check', desc: 'Audit your startup\'s sustainability by comparing LTV to CAC.', icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-100', border: 'hover:border-emerald-300' },
-    { id: 'breakeven', title: 'Advanced Break-Even Calculator', desc: 'Determine exact sales targets required to cover detailed fixed costs.', icon: Calculator, color: 'text-amber-600', bg: 'bg-amber-100', border: 'hover:border-amber-300' },
-    { id: 'pitch', title: 'Pitch Deck Analyzer', desc: 'Get quick, AI-powered feedback on your elevator pitch structure.', icon: Sparkles, color: 'text-indigo-600', bg: 'bg-indigo-100', border: 'hover:border-indigo-300' }
-  ];
 
   return (
     <div className="max-w-6xl mx-auto animate-fade-in relative z-10 pb-20">
@@ -204,19 +218,15 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
       {/* --- MATERIALS TAB --- */}
       {resourceTab === 'materials' && (
         <div className="space-y-10 animate-slide-up">
-          <div className="relative w-full mb-8">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
-            <input type="text" placeholder="Search templates, docs, videos..." value={resourceSearch} onChange={(e) => setResourceSearch(e.target.value)} className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white/80 backdrop-blur-sm" />
-          </div>
           {categories.map((category) => {
-            const categoryResources = filteredResources?.filter((res) => res.category === category);
+            const categoryResources = filteredMaterials?.filter((res) => res.category === category);
             if (categoryResources.length === 0) return null;
             return (
               <div key={category}>
                 <h3 className="text-xl font-bold text-slate-900 mb-4 font-display flex items-center gap-2 px-1"><span className="w-2 h-6 bg-indigo-500 rounded-full"></span>{category}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {categoryResources.map((res) => (
-                    <div key={res.id} className="bg-white/70 backdrop-blur-md border border-white/50 rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group flex flex-col">
+                    <div key={res.id} className={`bg-white/70 backdrop-blur-md border border-white/50 rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group flex flex-col ${globalSearch ? 'search-match' : ''}`}>
                       <div className="flex justify-between items-start mb-4">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${res.type === 'video' ? 'bg-red-100 text-red-600' : res.type === 'tool' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
                           {res.type === 'video' ? <PlayCircle size={20} /> : res.type === 'tool' ? <Calculator size={20} /> : <FileText size={20} />}
@@ -250,8 +260,8 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
         <div className="animate-slide-up">
           {!activeTool ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {INTERACTIVE_TOOLS.map((tool) => (
-                <div key={tool.id} className={`bg-white/80 backdrop-blur-xl border border-white/60 p-8 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-left group ${tool.border} relative flex flex-col`}>
+              {filteredTools.map((tool) => (
+                <div key={tool.id} className={`bg-white/80 backdrop-blur-xl border border-white/60 p-8 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-left group ${tool.border} relative flex flex-col ${globalSearch ? 'search-match' : ''}`}>
                   {/* BOOKMARK BUTTON */}
                   <button onClick={(e) => { e.stopPropagation(); toggleSaveResource({ id: tool.id, type: 'tool', title: tool.title, desc: tool.desc, tab: 'tools' }); addToast(isSaved(tool.id) ? 'Removed from Saved' : 'Added to Saved', 'info'); }} className={`absolute top-6 right-6 p-2 rounded-xl transition-colors z-20 border ${isSaved(tool.id) ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200'}`} title="Save Tool">
                     <Bookmark size={20} className={isSaved(tool.id) ? 'fill-current' : ''} />
@@ -390,8 +400,8 @@ export const Resources = ({ addToast, savedResources = [], toggleSaveResource })
         <div className="animate-slide-up">
           {!activeLesson ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {MINI_LESSONS.map((lesson) => (
-                <div key={lesson.id} className="bg-white/80 backdrop-blur-xl border border-white/60 p-8 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-left group relative flex flex-col">
+              {filteredLessons.map((lesson) => (
+                <div key={lesson.id} className={`bg-white/80 backdrop-blur-xl border border-white/60 p-8 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all text-left group relative flex flex-col ${globalSearch ? 'search-match' : ''}`}>
                   {/* BOOKMARK BUTTON */}
                   <button onClick={(e) => { e.stopPropagation(); toggleSaveResource({ id: `lesson_${lesson.id}`, type: 'lesson', title: lesson.title, desc: `${lesson.slides.length} Cards • Startup Theory`, tab: 'lessons' }); addToast(isSaved(`lesson_${lesson.id}`) ? 'Removed from Saved' : 'Added to Saved', 'info'); }} className={`absolute top-6 right-6 p-2 rounded-xl transition-colors z-20 border ${isSaved(`lesson_${lesson.id}`) ? 'bg-indigo-50 border-indigo-200 text-indigo-600' : 'bg-white border-slate-200 text-slate-400 hover:text-indigo-600 hover:border-indigo-200'}`} title="Save Lesson">
                     <Bookmark size={20} className={isSaved(`lesson_${lesson.id}`) ? 'fill-current' : ''} />
