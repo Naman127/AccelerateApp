@@ -20,7 +20,7 @@ export const Dashboard = ({
   setExpandedTask,
   events,
   handleNav,
-  globalSearch // <-- ADDED PROP
+  globalSearch 
 }) => {
   const blueprint = activeBiz
     ? BLUEPRINTS[activeBiz.type] || BLUEPRINTS['default']
@@ -35,7 +35,7 @@ export const Dashboard = ({
         <div className="flex-1">
           <RocketDashboard activeBusiness={activeBiz} />
           {activeBiz ? (
-            <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl overflow-hidden shadow-sm">
+            <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-2xl overflow-hidden shadow-sm transition-colors">
               {/* HERO IMAGE HEADER */}
               {blueprint?.headerImage && (
                 <div className="w-full h-48 relative">
@@ -86,7 +86,6 @@ export const Dashboard = ({
                     return stageNameMatches || taskTitle.toLowerCase().includes(searchLower) || taskDetail.toLowerCase().includes(searchLower);
                   });
 
-                  // Hide the entire stage if it's a search and nothing matches
                   if (isSearchActive && (!filteredTasks || filteredTasks.length === 0)) return null;
 
                   return (
@@ -113,19 +112,18 @@ export const Dashboard = ({
                           const taskDetail = typeof task === 'object' ? task.detail : 'Use our AI assistant to get specific tips for this step.';
                           const isDone = activeBiz.completedTasks.includes(taskTitle);
                           
-                          // Search Match Checks
                           const taskTitleMatches = isSearchActive && taskTitle.toLowerCase().includes(searchLower);
                           const taskDetailMatches = isSearchActive && taskDetail.toLowerCase().includes(searchLower);
                           const isTaskMatch = isSearchActive && (taskTitleMatches || taskDetailMatches);
-                          
-                          // Auto-expand if the search matches the detail text, otherwise respect normal state
                           const isExpanded = expandedTask === taskTitle || taskDetailMatches;
 
                           return (
                             <div key={taskTitle} className="relative group">
                               <div
                                 className={`w-full text-left p-3 rounded-lg border transition-all backdrop-blur-sm
-                                    ${isDone ? 'bg-green-50/60 border-green-200/60' : 'bg-white/40 border-slate-200/60 hover:border-slate-300 hover:bg-white/60'}
+                                    ${isDone 
+                                      ? 'bg-green-50/60 border-green-200/60' 
+                                      : 'bg-white/40 border-slate-200/60 hover:border-slate-300 hover:bg-white/60'}
                                     ${isTaskMatch ? 'search-match z-10 scale-[1.02] shadow-md' : ''}`}
                               >
                                 <div className="flex items-center justify-between">
@@ -317,7 +315,7 @@ export const Dashboard = ({
         </div>
 
         <div className="w-full md:w-80 space-y-6">
-          <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm">
+          <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm transition-colors">
             <h3 className="text-slate-900 font-bold mb-4 flex items-center justify-between font-display">
               My Fleet{' '}
               <button
@@ -398,7 +396,7 @@ export const Dashboard = ({
             </div>
           </div>
 
-          <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm">
+          <div className="bg-white/60 backdrop-blur-xl border border-white/50 rounded-xl p-5 shadow-sm transition-colors">
             <h3 className="text-slate-900 font-bold mb-4 flex items-center gap-2 font-display">
               <CalendarIcon size={18} className="text-purple-600" /> Upcoming
               Events

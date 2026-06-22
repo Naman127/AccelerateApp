@@ -65,10 +65,10 @@ const BUSINESS_TYPES = {
 };
 
 const AVAILABLE_MENTOR_SLOTS = [
-  { date: '2026-04-17', time: '10:00 AM' },
-  { date: '2026-04-19', time: '2:30 PM' },
-  { date: '2026-04-21', time: '11:00 AM' },
-  { date: '2026-04-23', time: '4:00 PM' }
+  { date: '2026-07-08', time: '10:00 AM' },
+  { date: '2026-07-19', time: '2:30 PM' },
+  { date: '2026-07-21', time: '11:00 AM' },
+  { date: '2026-07-23', time: '4:00 PM' }
 ];
 
 const BLUEPRINTS = {
@@ -2398,11 +2398,11 @@ const WEEKLY_CHALLENGE = {
 };
 
 const INITIAL_EVENTS = [
-  { id: 1, title: 'Founder Meetup: Tech', date: '2026-02-16', time: '4:00 PM', type: 'Networking' },
-  { id: 2, title: 'Legal Q&A with Lawyer', date: '2026-02-18', time: '2:00 PM', type: 'Expert Session' },
-  { id: 3, title: 'Pitch Practice', date: '2026-02-20', time: '11:00 AM', type: 'Workshop' },
-  { id: 4, title: 'MVP Demo Day', date: '2026-02-22', time: '1:00 PM', type: 'Deadline' },
-  { id: 5, title: 'Marketing Webinar', date: '2026-02-24', time: '9:00 AM', type: 'Learning' }
+  { id: 1, title: 'Founder Meetup: Tech', date: '2026-07-16', time: '4:00 PM', type: 'Networking' },
+  { id: 2, title: 'Legal Q&A with Lawyer', date: '2026-07-18', time: '2:00 PM', type: 'Expert Session' },
+  { id: 3, title: 'Pitch Practice', date: '2026-07-20', time: '11:00 AM', type: 'Workshop' },
+  { id: 4, title: 'MVP Demo Day', date: '2026-07-22', time: '1:00 PM', type: 'Deadline' },
+  { id: 5, title: 'Marketing Webinar', date: '2026-07-24', time: '9:00 AM', type: 'Learning' }
 ];
 
 const INITIAL_MENTORS = [
@@ -2425,7 +2425,7 @@ const INITIAL_PROFILE = {
   role: "Entrepreneur",
   headline: "Aspiring Founder",
   bio: "Computer Science student at State University. Building AI tools for accessibility. Passionate about ethical tech and sustainable scaling.",
-  avatarSeed: "Felix",
+  avatarSeed: "Maya",
   badges: [
     { id: 'b1', name: 'First Launch', icon: Rocket, color: 'text-cyan-600 bg-cyan-100' },
     { id: 'b2', name: 'Community Voice', icon: MessageCircle, color: 'text-purple-600 bg-purple-100' }

@@ -132,15 +132,50 @@ export default function AccelerateApp() {
   const [expandedSavedMission, setExpandedSavedMission] = useState(null);
 
   const [events, setEvents] = useState([
-    { id: 101, title: 'Workshop: Scaling with AI', date: '2026-04-11', time: '7:00 PM', type: 'Workshop' },
-    { id: 102, title: 'Expert Session: LLC vs Corp', date: '2026-04-13', time: '5:30 PM', type: 'Expert Session' },
-    { id: 103, title: 'Networking: Young Founders Mixer', date: '2026-04-14', time: '6:00 PM', type: 'Networking' },
-    { id: 104, title: 'Deadline: Pitch Deck Review', date: '2026-04-22', time: '11:59 PM', type: 'Deadline' },
-    { id: 105, title: 'Study Group: Marketing 101', date: '2026-04-28', time: '3:00 PM', type: 'Learning' }
+    // --- EARLY TO MID JUNE ---
+    { id: 'j1', title: 'Team Sync', date: '2026-06-02', time: '10:00 AM', type: 'Meeting' },
+    { id: 'j2', title: 'MVP Wireframes Due', date: '2026-06-05', time: '11:59 PM', type: 'Deadline' },
+    { id: 'j3', title: 'Local Founder Mixer', date: '2026-06-08', time: '6:00 PM', type: 'Networking' },
+    { id: 'j4', title: 'Intro to React', date: '2026-06-10', time: '1:00 PM', type: 'Learning' },
+    { id: 'j5', title: 'Marketing Strategy', date: '2026-06-10', time: '4:00 PM', type: 'Workshop' }, 
+    { id: 'j6', title: 'Q&A with Angel Investor', date: '2026-06-15', time: '2:00 PM', type: 'Expert Session' },
+    { id: 'j7', title: 'Logo Design Review', date: '2026-06-18', time: '11:00 AM', type: 'Workshop' },
+    { id: 'j8', title: 'FBLA Nationals Prep', date: '2026-06-22', time: '3:00 PM', type: 'Meeting' },
+    { id: 'j9', title: 'Financial Modeling', date: '2026-06-25', time: '10:00 AM', type: 'Learning' },
+    { id: 'j10', title: 'Beta Testing Closes', date: '2026-06-27', time: '5:00 PM', type: 'Deadline' },
+  
+    // --- NLC PRESENTATION WEEK (THE "LIVE" EVENTS) ---
+    { id: 'n1', title: 'NLC Opening Session Networking', date: '2026-06-29', time: '4:00 PM', type: 'Networking' },
+    { id: 'n2', title: 'Legal Q&A with Startup Lawyer', date: '2026-06-30', time: '2:00 PM', type: 'Expert Session' },
+    { id: 'n3', title: 'Last-Minute Pitch Polish', date: '2026-06-30', time: '5:00 PM', type: 'Workshop' }, 
+    { id: 'n4', title: 'Live Pitch Practice', date: '2026-07-01', time: '11:00 AM', type: 'Workshop' },
+    { id: 'n5', title: 'Founders Lunch', date: '2026-07-01', time: '12:30 PM', type: 'Networking' }, 
+    { id: 'n6', title: 'FBLA Awards Ceremony', date: '2026-07-02', time: '6:00 PM', type: 'Networking' },
+    
+    // --- POST-NLC & JULY ---
+    { id: 'jl1', title: 'Post-NLC Debrief', date: '2026-07-05', time: '10:00 AM', type: 'Meeting' },
+    { id: 'jl2', title: 'App Architecture', date: '2026-07-08', time: '2:00 PM', type: 'Learning' },
+    { id: 'jl3', title: 'Social Media Ads', date: '2026-07-10', time: '1:00 PM', type: 'Workshop' },
+    { id: 'jl3s', title: 'Roadmap Discussion', date: '2026-07-10', time: '4:00 PM', type: 'Meeting'},
+    { id: 'jl4', title: 'Cap Table Basics', date: '2026-07-12', time: '11:00 AM', type: 'Expert Session' },
+    { id: 'jl5', title: 'Weekly Check-in', date: '2026-07-12', time: '3:00 PM', type: 'Meeting' }, 
+    { id: 'jl6', title: 'Group Study Session', date: '2026-07-14', time: '5:00 PM', type: 'Learning' }, 
+    { id: 'jl7', title: 'UX/UI Feedback Loop', date: '2026-07-14', time: '1:00 PM', type: 'Workshop' },
+    
+    // --- LATE JULY ---
+    { id: 'jl8', title: 'SEO Optimization', date: '2026-07-17', time: '10:00 AM', type: 'Learning' },
+    { id: 'jl9', title: 'How to Hire', date: '2026-07-20', time: '2:00 PM', type: 'Expert Session' },
+    { id: 'jl10', title: 'MVP Public Launch', date: '2026-07-22', time: '8:00 AM', type: 'Deadline' },
+    { id: 'jl11', title: 'Angel Investor Mixer', date: '2026-07-22', time: '7:00 PM', type: 'Networking' }, 
+    { id: 'jl12', title: 'Growth Hacking', date: '2026-07-25', time: '11:00 AM', type: 'Workshop' },
+    { id: 'jl13', title: 'Scaling Operations', date: '2026-07-28', time: '1:00 PM', type: 'Learning' },
+    { id: 'jl14', title: 'Board Meeting', date: '2026-07-28', time: '4:00 PM', type: 'Meeting' }, 
+    { id: 'jl15', title: 'July Monthly Review', date: '2026-07-31', time: '3:00 PM', type: 'Meeting' }
   ]);
+
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
   const [editingEventId, setEditingEventId] = useState(null);
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 3, 1));
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [newEventForm, setNewEventForm] = useState({
     title: '',
     time: '',
@@ -362,19 +397,80 @@ export default function AccelerateApp() {
       addToast('Mission saved for later', 'success');
     }
   };
-
   const handleGenerateBlueprint = async (promptText) => {
-    if (!promptText || !promptText.trim()) return;
+    if (!promptText || !promptText.trim()) return false;
 
     setIsGenerating(true);
+
+    // 1. THE 11-SECOND PRESENTATION TIMER
+    // This guarantees your loading animation plays for exactly 11 seconds.
+    const minWaitTime = new Promise((resolve) => setTimeout(resolve, 11000));
+
+    // 2. THE 4x3 FALLBACK LOGIC
+    const generateFallback = () => {
+      return {
+        description: "A comprehensive, scalable architecture designed for enterprise-grade execution.",
+        isAiGenerated: true,
+        terms: [
+          { term: "ICP", def: "Ideal Customer Profile. The perfect demographic for your solution." },
+          { term: "CAC", def: "Customer Acquisition Cost. Total marketing spend to acquire one user." },
+          { term: "Telemetry", def: "Automated data collection from remote points to track performance." }
+        ],
+        funding: [
+          { title: "Pre-Seed Angel Round", type: "Equity", amount: "$50k - $250k", desc: "Initial capital to build the core architecture." }
+        ],
+        tools: [
+          { name: "Vercel", desc: "Production Infrastructure", link: "vercel.com" },
+          { name: "PostHog", desc: "Product Analytics", link: "posthog.com" }
+        ],
+        stages: [
+          {
+            name: "Phase 1: Validation & Research",
+            duration: "2 Weeks",
+            tasks: [
+              { title: "Define Ideal Customer Profile (ICP)", detail: "Map the exact demographics, pain points, and budget of your target user." },
+              { title: "Competitor Matrix Analysis", detail: "Identify 3 direct competitors and map their feature deficiencies." },
+              { title: "Waitlist Infrastructure", detail: "Deploy a high-conversion landing page to capture early-adopter emails." }
+            ]
+          },
+          {
+            name: "Phase 2: Minimum Viable Architecture",
+            duration: "1 Month",
+            tasks: [
+              { title: "Core Feature Isolation", detail: "Use the Pareto Principle to isolate the 20% of features that deliver 80% of the value." },
+              { title: "High-Fidelity Prototyping", detail: "Establish your design system and construct user flows in Figma." },
+              { title: "Tech Stack Initialization", detail: "Configure your repository, strict type-checking via TSX, and global state management." }
+            ]
+          },
+          {
+            name: "Phase 3: Go-to-Market Strategy",
+            duration: "3 Weeks",
+            tasks: [
+              { title: "Content Distribution Pipeline", detail: "Establish an automated calendar for social media and organic SEO growth." },
+              { title: "Cold Outreach Sequencing", detail: "Draft automated email workflows targeting B2B leads." },
+              { title: "Beta Cohort Onboarding", detail: "Manually onboard your first 50 users to ensure a frictionless experience." }
+            ]
+          },
+          {
+            name: "Phase 4: Optimization & Scaling",
+            duration: "Ongoing",
+            tasks: [
+              { title: "Telemetry Integration", detail: "Implement analytics tracking to monitor user retention and drop-off points." },
+              { title: "Qualitative Feedback Loops", detail: "Schedule 1-on-1 interviews with power users to guide the next development sprint." },
+              { title: "Iterative Release Cycle", detail: "Establish a CI/CD pipeline for deploying bug fixes and structural upgrades rapidly." }
+            ]
+          }
+        ]
+      };
+    };
+
+    let finalBlueprintData = null;
 
     try {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
       const model = genAI.getGenerativeModel({
         model: 'gemini-2.5-flash',
-        generationConfig: {
-          responseMimeType: 'application/json',
-        },
+        generationConfig: { responseMimeType: 'application/json' },
       });
 
       const prompt = `
@@ -426,107 +522,51 @@ export default function AccelerateApp() {
         }
       `;
 
-      const result = await model.generateContent(prompt);
+      // 3. WAIT FOR BOTH THE API *AND* THE 11 SECONDS TO FINISH
+      const [result] = await Promise.all([
+        model.generateContent(prompt),
+        minWaitTime
+      ]);
+
       const responseText = result.response.text();
-      const aiData = JSON.parse(responseText);
-
-      const newId = `ai_${Date.now()}`;
-
-      BLUEPRINTS[newId] = {
-        title: `AI Blueprint: ${promptText.substring(0, 30)}...`,
-        description: aiData.description,
-        terms: aiData.terms,
-        funding: aiData.funding,
-        tools: aiData.tools,
-        stages: aiData.stages,
-      };
-
-      const mockBlueprint = {
-        id: newId,
-        name:
-          promptText.length > 20
-            ? promptText.substring(0, 20) + '...'
-            : promptText,
-        type: newId,
-        field: 'custom',
-        isAiGenerated: true,
-        progress: 0,
-        completedTasks: [],
-      };
-
-      setMyBusinesses([...myBusinesses, mockBlueprint]);
-      setActiveBusinessId(mockBlueprint.id);
-      setActiveTab('dashboard');
-      setIsGenerating(false);
-      addToast('AI Mission Generated Successfully!', 'success');
-    } catch (error) {
-      console.error('AI Generation API failed. Deploying fallback blueprint:', error);
-
-      await new Promise(resolve => setTimeout(resolve, 2500));
-
-      // HARDCODED FALLBACK BLUEPRINT
-      const aiData = {
-        description: "A streamlined, digital-first approach to solving this market inefficiency.",
-        terms: [
-          { term: "MVP", def: "Minimum Viable Product - the simplest version of your idea." },
-          { term: "CAC", def: "Customer Acquisition Cost - how much it costs to get one user." }
-        ],
-        funding: [
-          { title: "Bootstrap Launch", type: "Self-Funded", amount: "$500", desc: "Initial capital to cover domain, hosting, and basic marketing." }
-        ],
-        tools: [
-          { name: "Figma", desc: "For UI/UX design prototyping.", link: "figma.com" },
-          { name: "Vercel", desc: "For fast, reliable web hosting.", link: "vercel.com" }
-        ],
-        stages: [
-          {
-            name: "Phase 1: Concept & Validation",
-            duration: "2 Weeks",
-            tasks: [
-              { title: "Define Target Audience", detail: "Identify exactly who will pay for this service." },
-              { title: "Competitor Analysis", detail: "List 3 competitors and define your unique advantage." }
-            ]
-          },
-          {
-            name: "Phase 2: Setup & MVP",
-            duration: "1 Month",
-            tasks: [
-               { title: "Build Landing Page", detail: "Set up a waitlist to gauge market interest." },
-               { title: "Draft Core Features", detail: "Map out the user journey for your first customers." }
-            ]
-          }
-        ]
-      };
-
-      const newId = `ai_fallback_${Date.now()}`;
-
-      BLUEPRINTS[newId] = {
-        title: `AI Blueprint: ${promptText.substring(0, 30)}...`,
-        description: aiData.description,
-        terms: aiData.terms,
-        funding: aiData.funding,
-        tools: aiData.tools,
-        stages: aiData.stages,
-      };
-
-      const mockBlueprint = {
-        id: newId,
-        name: promptText.length > 20 ? promptText.substring(0, 20) + '...' : promptText,
-        type: newId,
-        field: 'custom',
-        isAiGenerated: true, // Keeps the AI disclaimer visible in the dashboard
-        progress: 0,
-        completedTasks: [],
-      };
-
-      setMyBusinesses([...myBusinesses, mockBlueprint]);
-      setActiveBusinessId(mockBlueprint.id);
-      setActiveTab('dashboard');
-      setIsGenerating(false);
+      finalBlueprintData = JSON.parse(responseText);
       
-      // FAKE SUCCESS TOAST
-      addToast('AI Mission Generated Successfully!', 'success');
+    } catch (error) {
+      console.warn('API call failed. Waiting for presentation timer to finish before applying fallback...');
+      
+      // If it fails instantly, STILL wait the 11 seconds
+      await minWaitTime;
+      finalBlueprintData = generateFallback();
     }
+
+    // 4. APPLY THE DATA TO STATE
+    const newId = `ai_${Date.now()}`;
+
+    BLUEPRINTS[newId] = {
+      title: `AI Blueprint: ${promptText.substring(0, 30)}...`,
+      description: finalBlueprintData.description,
+      terms: finalBlueprintData.terms,
+      funding: finalBlueprintData.funding,
+      tools: finalBlueprintData.tools,
+      stages: finalBlueprintData.stages,
+    };
+
+    const mockBlueprint = {
+      id: newId,
+      name: promptText.length > 20 ? promptText.substring(0, 20) + '...' : promptText,
+      type: newId,
+      field: 'custom',
+      isAiGenerated: true,
+      progress: 0,
+      completedTasks: [],
+    };
+
+    setMyBusinesses((prev) => [...prev, mockBlueprint]);
+    setActiveBusinessId(mockBlueprint.id);
+    
+    // CRITICAL: We DO NOT call setActiveTab('dashboard') here anymore!
+    setIsGenerating(false);
+    return true; // Signals Home.tsx to show the Success screen
   };
 
   const handleStartBusiness = (typeId, fieldId, name) => {

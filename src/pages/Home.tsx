@@ -69,11 +69,23 @@ export const Home = ({
 }) => {
   const [aiPrompt, setAiPrompt] = useState('');
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   
   const submitAiPrompt = async () => {
+    // Await the 11-second timer from App.tsx without closing the modal
     await handleGenerateBlueprint(aiPrompt);
+    setIsSuccess(true);
+  };
+
+  const handleCloseAiModal = () => {
     setIsAiModalOpen(false);
     setAiPrompt('');
+    setIsSuccess(false); 
+  };
+
+  const handleNavigateToDashboard = () => {
+    handleCloseAiModal();
+    handleNav('dashboard');
   };
 
   const isSearchActive = !!globalSearch;
@@ -134,7 +146,6 @@ export const Home = ({
                         <span className="font-medium text-cyan-700">Est. Cost: {type.cost}</span>
                       </div>
                     </div>
-                    {/* HAPTIC BUTTON */}
                     <button 
                       onClick={() => handleStartBusiness(type.id, type.fieldId, type.name)} 
                       className="w-full py-3 bg-slate-100/50 hover:bg-slate-200/50 text-slate-900 rounded-lg font-semibold transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 font-body mt-auto group/btn"
@@ -158,7 +169,6 @@ export const Home = ({
 
           {!selectedField && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto mb-16">
-              {/* Note: Ensure FeatureCard component also has hover:-translate-y-1 and active:scale-[0.98] inside it! */}
               {BUSINESS_FIELDS.map((field) => (
                 <FeatureCard key={field.id} icon={field.icon} title={field.name} desc={field.desc} color={field.color} onClick={() => setSelectedField(field)} />
               ))}
@@ -168,7 +178,6 @@ export const Home = ({
           {!selectedField && (
             <div className="max-w-6xl mx-auto mb-12 animate-slide-up" style={{ animationDelay: '0.2s' }}>
               <div className="flex flex-col md:flex-row gap-6">
-                {/* HAPTIC AI CARD */}
                 <button 
                   onClick={() => setIsAiModalOpen(true)} 
                   className="flex-1 bg-white/80 backdrop-blur-xl border border-amber-200/60 p-6 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 ease-out group text-left relative"
@@ -186,7 +195,6 @@ export const Home = ({
                   </div>
                 </button>
 
-                {/* HAPTIC DNA CARD */}
                 <button 
                   onClick={() => setIsQuizOpen(true)} 
                   className="flex-1 bg-white/80 backdrop-blur-xl border border-amber-200/60 p-6 rounded-2xl shadow-lg hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-300 ease-out group text-left relative"
@@ -256,30 +264,102 @@ export const Home = ({
       {isAiModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 animate-in fade-in">
           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col relative border border-white/20">
-            <button onClick={() => setIsAiModalOpen(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 z-10 transition-transform active:scale-90"><X size={20} /></button>
+            
+            <button 
+              onClick={handleCloseAiModal} 
+              className="absolute top-4 right-4 text-white hover:text-slate-200 z-50 transition-transform active:scale-90"
+            >
+              <X size={20} />
+            </button>
+            
             <div className="bg-gradient-to-r from-amber-500 to-orange-600 p-8 text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 p-8 opacity-20"><BrainCircuit size={120} /></div>
               <h2 className="text-3xl font-bold font-display relative z-10 flex items-center gap-3"><Sparkles /> AI Architect</h2>
             </div>
-            <div className="p-8">
-              {isGenerating ? (
-                <div className="flex flex-col items-center justify-center py-12">
-                  <Loader2 className="animate-spin text-amber-600 mb-4" size={48} />
-                  <h3 className="text-xl font-bold text-slate-900 font-display animate-pulse">Constructing Blueprint...</h3>
+            
+            <div className="relative min-h-[300px] flex flex-col justify-center bg-white">
+              
+              {/* STATE 1: INPUT FORM */}
+              {!isGenerating && !isSuccess && (
+                <div className="p-8 space-y-6 animate-in fade-in">
+                  <p className="text-slate-600 font-body text-base">
+                    Describe your unique business concept. Our intelligent architect will construct a custom, step-by-step roadmap specifically for your idea.
+                  </p>
+                  
+                  <textarea
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    placeholder="e.g. A subscription service delivering eco-friendly pet toys..."
+                    className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl font-body text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all resize-none shadow-sm"
+                  />
+                  
+                  <button
+                    onClick={submitAiPrompt}
+                    disabled={!aiPrompt.trim()}
+                    className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 font-display shadow-lg shadow-orange-500/20 text-lg"
+                  >
+                    Generate Blueprint <Sparkles size={20} />
+                  </button>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  <label className="block text-sm font-bold text-slate-700 font-body uppercase tracking-wide">Your Idea</label>
-                  <textarea value={aiPrompt} onChange={(e) => setAiPrompt(e.target.value)} className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none resize-none font-body text-slate-900 transition-all" placeholder="e.g. A subscription service for organic dog treats..." />
-                  <div className="flex justify-end pt-4">
-                    <button 
-                      onClick={submitAiPrompt} 
-                      disabled={!aiPrompt.trim()} 
-                      className={`px-8 py-3 rounded-lg font-bold flex items-center gap-2 transition-all duration-200 ${!aiPrompt.trim() ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-amber-600 hover:bg-amber-700 active:scale-95 text-white shadow-lg shadow-amber-200'}`}
-                    >
-                      <Bot size={20} /> Generate Blueprint
-                    </button>
+              )}
+
+              {/* STATE 2: LOADING ANIMATION */}
+              {isGenerating && (
+                <div className="absolute inset-0 z-40 flex items-center justify-center overflow-hidden bg-white rounded-b-2xl">
+                  
+                  {/* Faded Amber and Purple Aurora Background */}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div 
+                      className="absolute -top-[20%] -left-[10%] w-[100%] h-[100%] bg-amber-400/20 rounded-full filter blur-[80px] animate-pulse" 
+                      style={{ animationDuration: '4s' }}
+                    ></div>
+                    <div 
+                      className="absolute -bottom-[20%] -right-[10%] w-[100%] h-[100%] bg-purple-500/15 rounded-full filter blur-[80px] animate-pulse" 
+                      style={{ animationDuration: '6s', animationDelay: '1s' }}
+                    ></div>
                   </div>
+
+                  {/* Foreground Loading Content */}
+                  <div className="relative z-10 flex flex-col items-center text-center animate-in fade-in zoom-in duration-500">
+                    <div className="relative w-24 h-24 mb-8 flex items-center justify-center">
+                      <div className="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin duration-1000"></div>
+                      <div className="absolute inset-0 bg-amber-500/10 rounded-full animate-pulse"></div>
+                      <Sparkles className="text-amber-600 animate-pulse" size={36} />
+                    </div>
+
+                    <h3 className="text-2xl font-bold text-slate-900 font-display mb-3 tracking-tight">
+                      Architecting Blueprint
+                    </h3>
+                    <p className="text-sm text-slate-600 font-body leading-relaxed max-w-[280px]">
+                      Synthesizing market variables and formatting your structural roadmap...
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* STATE 3: SUCCESS SCREEN */}
+              {!isGenerating && isSuccess && (
+                <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-white p-8 animate-in fade-in rounded-b-2xl">
+                  <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                    <Check size={40} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 font-display mb-2">Blueprint Ready!</h3>
+                  <p className="text-slate-600 font-body text-center mb-8 max-w-sm">
+                    Your custom structural roadmap has been successfully configured and added to your active operations.
+                  </p>
+                  <button 
+                    onClick={handleNavigateToDashboard} 
+                    className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2 font-display shadow-lg"
+                  >
+                    Go to Mission Dashboard <ArrowLeft className="rotate-180" size={20} />
+                  </button>
+                  <button 
+                    onClick={handleCloseAiModal} 
+                    className="w-full mt-4 py-2 text-slate-500 hover:text-slate-700 font-bold transition-all active:scale-95 font-body text-sm"
+                  >
+                    Close
+                  </button>
                 </div>
               )}
             </div>

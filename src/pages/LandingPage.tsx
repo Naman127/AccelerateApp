@@ -337,10 +337,6 @@ export const LandingPage = ({ onEnter }) => {
 
         {/* MAIN TEXT ANCHOR */}
         <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-white/80 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-10 shadow-sm backdrop-blur-md">
-            <Sparkles size={14} className="text-indigo-500" /> Accelerate Your Future
-          </div>
-
           <div className="flex flex-col items-center justify-center mb-8 w-full">
             <span className="text-5xl sm:text-7xl lg:text-[6.5rem] font-black text-slate-900 font-display leading-tight tracking-tight drop-shadow-sm mb-4 sm:mb-6">
               Accelerate your
@@ -867,7 +863,7 @@ export const LandingPage = ({ onEnter }) => {
 
       {/* Footer */}
       <footer className="text-center py-10 text-slate-500 font-body text-sm border-t border-slate-200/50 bg-white/30 backdrop-blur-md relative z-10">
-        <p className="font-bold">Built by Naman M, Shifa B, Arnav T</p>
+        <p className="font-bold">Built by Naman M, Shifa B, Vinitha N</p>
       </footer>
     </div>
   );
