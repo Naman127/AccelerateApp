@@ -13,7 +13,11 @@ import {
   Clock,
   CalendarCheck,
   Medal,
-  Search
+  Search,
+  Bookmark,
+  BookOpen,
+  Briefcase,
+  Settings as SettingsIcon
 } from 'lucide-react';
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -940,6 +944,13 @@ export default function AccelerateApp() {
       ${accessibility.dyslexicFont ? 'font-serif tracking-wide' : 'font-sans'}
     `}>
       <style>{`
+        .hide-scroll {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .hide-scroll::-webkit-scrollbar {
+          display: none;
+        }
         @keyframes search-match-pulse {
           0%, 100% { box-shadow: 0 0 0 2px rgba(99,102,241,1), 0 0 20px rgba(99,102,241,0.4); }
           50% { box-shadow: 0 0 0 2px rgba(129,140,248,1), 0 0 35px rgba(129,140,248,0.7); }
@@ -1114,7 +1125,7 @@ export default function AccelerateApp() {
 
           <main id="main-scroll-container" className="flex-1 md:ml-64 h-screen overflow-y-auto relative z-10 pb-20 md:pb-0">
             <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
-              {/* --- DYNAMIC GLOBAL SEARCH BAR --- */}
+              {/*global search bar*/}
               <div className="flex-1 max-w-lg relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Search size={18} className="text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
@@ -1374,48 +1385,43 @@ export default function AccelerateApp() {
               </div>
             </div>
           </main>
-
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-white/50 p-2 flex justify-around z-30">
-            <button
-              onClick={() => setActiveTab('dashboard')}
-              className={`p-3 rounded-xl ${
-                activeTab === 'dashboard' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
-              }`}
-            >
-              <LayoutDashboard size={24} />
-            </button>
-            <button
-              onClick={() => setActiveTab('community')}
-              className={`p-3 rounded-xl ${
-                activeTab === 'community' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
-              }`}
-            >
-              <Users size={24} />
-            </button>
-            <button
-              onClick={() => setActiveTab('home')}
-              className={`p-3 rounded-xl ${
-                activeTab === 'home' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
-              }`}
-            >
-              <Rocket size={24} />
-            </button>
-            <button
-              onClick={() => setActiveTab('calendar')}
-              className={`p-3 rounded-xl ${
-                activeTab === 'calendar' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
-              }`}
-            >
-              <CalendarIcon size={24} />
-            </button>
-            <button
-              onClick={() => handleNav('profile')}
-              className={`p-3 rounded-xl ${
-                activeTab === 'profile' ? 'text-indigo-600 bg-indigo-50/50' : 'text-slate-400'
-              }`}
-            >
-              <User size={24} />
-            </button>
+          {/* MOBILE BOTTOM NAVIGATION BAR */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 flex items-center gap-2 overflow-x-auto hide-scroll px-4 py-2 z-40 snap-x snap-mandatory shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe">
+            
+            {[
+              { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+              { id: 'home', icon: Rocket, label: 'Browse' },
+              { id: 'saved', icon: Bookmark, label: 'Saved' },
+              { id: 'community', icon: Users, label: 'Community' },
+              { id: 'resources', icon: BookOpen, label: 'Resources' },
+              { id: 'calendar', icon: CalendarIcon, label: 'Calendar' },
+              { id: 'mentors', icon: Briefcase, label: 'Mentors' },
+              { id: 'settings', icon: SettingsIcon, label: 'Settings' },
+              { id: 'profile', icon: User, label: 'Profile' },
+            ].map((tab) => {
+              const isActive = activeTab === tab.id;
+              const Icon = tab.icon;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleNav(tab.id === 'profile' ? 'profile' : tab.id)}
+                  className={`flex flex-col items-center justify-center flex-shrink-0 snap-center min-w-[4.5rem] py-2 px-1 rounded-xl transition-all duration-300 ${
+                    isActive 
+                      ? 'text-indigo-600 bg-indigo-50/80 shadow-sm border border-indigo-100/50' 
+                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  <Icon size={22} className={`${isActive ? 'mb-1 scale-110' : 'mb-1 opacity-80'} transition-transform`} />
+                  
+                  {/* Text only expands and appears when the tab is active to save space */}
+                  <span className={`text-[10px] font-bold font-body tracking-wide transition-all duration-300 ${
+                    isActive ? 'opacity-100 h-auto' : 'opacity-0 h-0 overflow-hidden'
+                  }`}>
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           {isBookingModalOpen && selectedMentorForBooking && (

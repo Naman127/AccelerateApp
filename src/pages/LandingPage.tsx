@@ -336,23 +336,27 @@ export const LandingPage = ({ onEnter }) => {
       >
 
         {/* MAIN TEXT ANCHOR */}
-        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center">
+        <div className="relative z-10 max-w-4xl mx-auto text-center flex flex-col items-center px-4">
           <div className="flex flex-col items-center justify-center mb-8 w-full">
-            <span className="text-5xl sm:text-7xl lg:text-[6.5rem] font-black text-slate-900 font-display leading-tight tracking-tight drop-shadow-sm mb-4 sm:mb-6">
+            <span className="text-4xl sm:text-7xl lg:text-[6.5rem] font-black text-slate-900 font-display leading-tight tracking-tight drop-shadow-sm mb-4 sm:mb-6">
               Accelerate your
             </span>
             
-            {/* The Typewriter "Pill" Cage */}
-            <div className="h-20 sm:h-28 lg:h-36 w-[450px] sm:w-[730px] lg:w-[1010px] bg-white/60 backdrop-blur-xl border-2 border-white/80 rounded-full shadow-[0_20px_50px_rgba(79,70,229,0.15)] flex items-center justify-center relative overflow-hidden transition-all duration-300">
+            {/* THE FIX: Changed w-[450px] to a responsive w-full max-w-[340px] for mobile */}
+            <div className="h-20 sm:h-28 lg:h-36 w-full max-w-[340px] sm:max-w-none sm:w-[730px] lg:w-[1010px] bg-white/60 backdrop-blur-xl border-2 border-white/80 rounded-full shadow-[0_20px_50px_rgba(79,70,229,0.15)] flex items-center justify-center relative overflow-hidden transition-all duration-300">
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-cyan-500/10"></div>
               <div className="relative z-10 flex items-center justify-center w-full">
-                 <IsolatedTypewriter />
+                 {/* THE FIX: Lowered baseline text size so mobile doesn't clip */}
+                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-500 inline-block text-center whitespace-nowrap text-3xl sm:text-6xl lg:text-8xl font-black font-display tracking-tight">
+                    {/* Note: Ensure IsolatedTypewriter receives or renders this text correctly */}
+                    <IsolatedTypewriter />
+                 </span>
                  <span className="typewriter-cursor h-10 sm:h-16 lg:h-20 ml-2 sm:ml-3 inline-block align-middle w-1 sm:w-2 bg-slate-900 animate-pulse rounded-full"></span>
               </div>
             </div>
           </div>
 
-          <p className="text-lg sm:text-xl text-slate-600 font-body max-w-2xl mb-12 leading-relaxed bg-white/40 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-white/50 shadow-sm">
+          <p className="text-base sm:text-xl text-slate-600 font-body max-w-2xl mb-12 leading-relaxed bg-white/40 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-white/50 shadow-sm">
             Stop analyzing. Start building. Accelerate provides structured,
             industry-specific blueprints that guide student founders from
             concept to their first customer.
@@ -360,7 +364,7 @@ export const LandingPage = ({ onEnter }) => {
 
           <button
             onClick={onEnter}
-            className="bg-slate-900 hover:bg-indigo-600 text-white px-10 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-lg shadow-2xl shadow-slate-900/20 hover:shadow-indigo-500/30 transition-all duration-300 hover:-translate-y-1 flex items-center gap-3 font-body group relative overflow-hidden"
+            className="bg-slate-900 hover:bg-indigo-600 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg shadow-2xl shadow-slate-900/20 hover:shadow-indigo-500/30 transition-all duration-300 hover:-translate-y-1 flex items-center gap-3 font-body group relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
             Enter Workspace{' '}
