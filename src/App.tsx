@@ -970,26 +970,31 @@ export default function AccelerateApp() {
           0%, 100% { transform: translateY(0px) scale(1); }
           50% { transform: translateY(80px) scale(1.05); }
         }
-
         /* --- GLOBAL HIGH CONTRAST OVERRIDES --- */
         ${accessibility.highContrast ? `
-          /* 1. Convert all glassmorphism cards to solid, high-contrast blocks */
-          .backdrop-blur-xl, .backdrop-blur-md, .bg-white\\/60, .bg-white\\/70, .bg-white\\/80 {
+          /* 1. Convert all glassmorphism cards and subtle backgrounds to high-contrast blocks */
+          .backdrop-blur-xl, .backdrop-blur-md, .bg-white\\/40, .bg-white\\/50, .bg-white\\/60, .bg-white\\/70, .bg-white\\/80, .bg-slate-50, .bg-slate-100 {
             background-color: #ffffff !important;
             backdrop-filter: none !important;
-            border: 2px solid #0f172a !important; /* Thick dark slate border */
-            box-shadow: 4px 4px 0px rgba(15, 23, 26, 0.1) !important; /* Crisp edge shadow */
+            border: 2px solid #020617 !important; /* Thick dark slate border */
+            box-shadow: 4px 4px 0px rgba(2, 6, 23, 1) !important; /* Solid brutalist shadow */
+            color: #020617 !important;
           }
           
-          /* 2. Darken all secondary gray text for WCAG compliance */
-          .text-slate-400, .text-slate-500, .text-slate-600 {
-            color: #1e293b !important; 
-            font-weight: 600 !important;
+          /* 2. Force borders on interactive elements so they never blend in */
+          button, input, select, textarea, .border {
+            border: 2px solid #020617 !important;
           }
 
-          /* 3. Make subtle borders much darker */
-          .border-slate-100, .border-slate-200, .border-white\\/50, .border-white\\/40 {
-            border-color: #94a3b8 !important;
+          /* 3. Darken all secondary gray text for WCAG compliance */
+          .text-slate-400, .text-slate-500, .text-slate-600, .text-cyan-500, .text-cyan-600, .text-indigo-500, .text-indigo-600 {
+            color: #020617 !important; 
+            font-weight: 800 !important;
+          }
+
+          /* 4. Make all existing subtle borders pitch black */
+          .border-slate-100, .border-slate-200, .border-white\\/50, .border-white\\/40, .border-white\\/60 {
+            border-color: #020617 !important;
           }
         ` : ''}
         /* --- PREMIUM MIDNIGHT DARK MODE OVERRIDES --- */

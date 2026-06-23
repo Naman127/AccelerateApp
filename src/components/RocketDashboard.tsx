@@ -79,7 +79,7 @@ export const RocketDashboard = ({ activeBusiness }) => {
           </div>
 
           {/* Labels Row */}
-          <div className="relative w-full mt-12 h-6">
+          <div className="relative w-full mt-12 h-6 px-1">
             {labels.map((label, idx) => {
               let positionStyle = {
                 left: `${milestones[idx]}%`,
@@ -96,11 +96,11 @@ export const RocketDashboard = ({ activeBusiness }) => {
               return (
                 <span
                   key={idx}
-                  className={`absolute top-0 text-[10px] uppercase tracking-widest font-bold font-body whitespace-nowrap transition-colors duration-500 ${
+                  className={`absolute top-0 text-[8px] xs:text-[9px] sm:text-[10px] uppercase font-black font-body whitespace-nowrap transition-colors duration-500 tracking-tight sm:tracking-widest ${
                     progress >= milestones[idx]
-                      ? 'text-indigo-600'
+                      ? 'text-indigo-600 dark:text-indigo-400'
                       : 'text-slate-400 opacity-60'
-                  } ${positionStyle.transform}`}
+                  }`}
                   style={{
                     left: positionStyle.left,
                     transform: positionStyle.transform,
