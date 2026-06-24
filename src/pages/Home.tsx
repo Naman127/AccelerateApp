@@ -337,28 +337,40 @@ export const Home = ({
                   </div>
                 </div>
               )}
-
+              
+              {/* STATE 3: SUCCESS SCREEN */}
               {/* STATE 3: SUCCESS SCREEN */}
               {!isGenerating && isSuccess && (
-                <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-white p-8 animate-in fade-in rounded-b-2xl">
-                  <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6 shadow-sm">
-                    <Check size={40} />
+                <div className="p-10 flex flex-col items-center justify-center text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  
+                  {/* Upgraded Checkmark with subtle pulse */}
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 bg-green-500/20 rounded-full animate-ping duration-1000"></div>
+                    <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center relative z-10 shadow-sm border-4 border-white">
+                      <Check size={40} strokeWidth={3} />
+                    </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 font-display mb-2">Blueprint Ready!</h3>
-                  <p className="text-slate-600 font-body text-center mb-8 max-w-sm">
+                  
+                  <h3 className="text-3xl font-bold text-slate-900 font-display mb-3 tracking-tight">
+                    Blueprint Ready!
+                  </h3>
+                  <p className="text-slate-600 font-body mb-8 max-w-sm leading-relaxed">
                     Your custom structural roadmap has been successfully configured and added to your active operations.
                   </p>
+                  
+                  {/* Changed to font-body for a cleaner, modern UI look */}
                   <button 
                     onClick={handleNavigateToDashboard} 
-                    className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2 font-display shadow-lg"
+                    className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all active:scale-95 flex items-center justify-center gap-2 font-body shadow-lg shadow-slate-900/20 text-lg"
                   >
                     Go to Mission Dashboard <ArrowLeft className="rotate-180" size={20} />
                   </button>
+                  
                   <button 
                     onClick={handleCloseAiModal} 
-                    className="w-full mt-4 py-2 text-slate-500 hover:text-slate-700 font-bold transition-all active:scale-95 font-body text-sm"
+                    className="w-full mt-3 py-3 text-slate-500 hover:text-slate-800 font-bold transition-all active:scale-95 font-body text-sm rounded-lg hover:bg-slate-50"
                   >
-                    Close
+                    Close Window
                   </button>
                 </div>
               )}
