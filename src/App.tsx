@@ -1117,318 +1117,327 @@ export default function AccelerateApp() {
           onClose={() => removeToast(toast.id)}
         />
       ))}
+      {/* --- LAYER 1: THE MAIN APP (Pre-rendered but hidden initially) --- */}
+      <div 
+            className={`absolute inset-0 flex w-full h-full transition-opacity duration-700 ease-in-out ${
+              hasEnteredApp ? 'opacity-100 pointer-events-auto z-10' : 'opacity-0 pointer-events-none -z-10'
+            }`}
+          >
+            <Sidebar
+              activeTab={activeTab}
+              setActiveTab={handleNav}
+              onReturnHome={() => setHasEnteredApp(false)}
+            />
 
-      {!hasEnteredApp ? (
-        <LandingPage onEnter={() => setHasEnteredApp(true)} />
-      ) : (
-        <>
-          <Sidebar
-            activeTab={activeTab}
-            setActiveTab={handleNav}
-            onReturnHome={() => setHasEnteredApp(false)}
-          />
-
-          <main id="main-scroll-container" className="flex-1 md:ml-64 h-screen overflow-y-auto relative z-10 pb-20 md:pb-0">
-            <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
-              {/*global search bar*/}
-              <div className="flex-1 max-w-lg relative group">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search size={18} className="text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
-                </div>
-                <input
-                  type="text"
-                  placeholder={`Search ${activeTab === 'home' ? 'browse' : activeTab}...`}
-                  value={globalSearch}
-                  onChange={(e) => setGlobalSearch(e.target.value)}
-                  className="w-full bg-slate-100/50 hover:bg-slate-100 focus:bg-white border border-slate-200/50 focus:border-indigo-500 text-slate-900 rounded-full py-2.5 pl-11 pr-10 shadow-sm focus:shadow-md transition-all outline-none font-body text-sm"
-                />
-                {globalSearch && (
-                  <button 
-                    onClick={() => setGlobalSearch('')} 
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
-                  >
-                    <X size={16} />
-                  </button>
-                )}
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="relative">
-                  <button
-                    onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-                    className="relative p-2 text-slate-500 hover:bg-white/50 rounded-full transition-colors"
-                  >
-                    <Bell size={20} />
-                    {notifications.some((n) => !n.read) && (
-                      <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
-                    )}
-                  </button>
-
-                  {isNotificationsOpen && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white/90 backdrop-blur-xl border border-white/60 rounded-xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 origin-top-right">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="font-bold text-slate-900 font-display">
-                          Notifications
-                        </h3>
-                        <button
-                          onClick={handleMarkNotificationsRead}
-                          className="text-xs text-indigo-600 hover:underline font-body"
-                        >
-                          Mark all read
-                        </button>
-                      </div>
-                      <div className="space-y-3">
-                        {notifications.map((n) => (
-                          <div
-                            key={n.id}
-                            className={`flex items-start gap-3 p-2 rounded-lg ${
-                              n.read ? 'opacity-60' : 'bg-white/50'
-                            }`}
-                          >
-                            <div
-                              className={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${
-                                n.read ? 'bg-slate-300' : 'bg-indigo-500'
-                              }`}
-                            ></div>
-                            <div>
-                              <p className="text-sm text-slate-800 font-body leading-tight">
-                                {n.text}
-                              </p>
-                              <span className="text-xs text-slate-400 font-body">
-                                {n.time}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+            <main id="main-scroll-container" className="flex-1 md:ml-64 h-screen overflow-y-auto relative z-10 pb-20 md:pb-0">
+              <header className="bg-white/60 backdrop-blur-xl sticky top-0 z-30 border-b border-white/50 px-6 py-4 flex items-center justify-between">
+                
+                {/* --- GLOBAL SEARCH BAR --- */}
+                <div className="flex-1 max-w-lg relative group">
+                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <Search size={18} className="text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder={`Search ${activeTab === 'home' ? 'browse' : activeTab}...`}
+                    value={globalSearch}
+                    onChange={(e) => setGlobalSearch(e.target.value)}
+                    className="w-full bg-slate-100/50 hover:bg-slate-100 focus:bg-white border border-slate-200/50 focus:border-indigo-500 text-slate-900 rounded-full py-2.5 pl-11 pr-10 shadow-sm focus:shadow-md transition-all outline-none font-body text-sm"
+                  />
+                  {globalSearch && (
+                    <button 
+                      onClick={() => setGlobalSearch('')} 
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600"
+                    >
+                      <X size={16} />
+                    </button>
                   )}
                 </div>
 
-                <div
-                  className="flex items-center gap-3 cursor-pointer group"
-                  onClick={() => handleNav('profile')}
-                >
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-slate-900 font-body">
-                      {userProfile.name}
-                    </p>
-                    <p className="text-xs text-cyan-600 font-body">
-                      {userProfile.role}
-                    </p>
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <button
+                      onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+                      className="relative p-2 text-slate-500 hover:bg-white/50 rounded-full transition-colors"
+                    >
+                      <Bell size={20} />
+                      {notifications.some((n) => !n.read) && (
+                        <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
+                      )}
+                    </button>
+
+                    {isNotificationsOpen && (
+                      <div className="absolute right-0 mt-2 w-80 bg-white/90 backdrop-blur-xl border border-white/60 rounded-xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 origin-top-right">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="font-bold text-slate-900 font-display">
+                            Notifications
+                          </h3>
+                          <button
+                            onClick={handleMarkNotificationsRead}
+                            className="text-xs text-indigo-600 hover:underline font-body"
+                          >
+                            Mark all read
+                          </button>
+                        </div>
+                        <div className="space-y-3">
+                          {notifications.map((n) => (
+                            <div
+                              key={n.id}
+                              className={`flex items-start gap-3 p-2 rounded-lg ${
+                                n.read ? 'opacity-60' : 'bg-white/50'
+                              }`}
+                            >
+                              <div
+                                className={`w-2 h-2 mt-1.5 rounded-full flex-shrink-0 ${
+                                  n.read ? 'bg-slate-300' : 'bg-indigo-500'
+                                }`}
+                              ></div>
+                              <div>
+                                <p className="text-sm text-slate-800 font-body leading-tight">
+                                  {n.text}
+                                </p>
+                                <span className="text-xs text-slate-400 font-body">
+                                  {n.time}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
+
                   <div
-                    className={`w-10 h-10 rounded-full bg-slate-200 border-2 border-white overflow-hidden shadow-sm transition-all ${
-                      activeTab === 'profile' ? 'ring-2 ring-indigo-300' : ''
-                    }`}
+                    className="flex items-center gap-3 cursor-pointer group"
+                    onClick={() => handleNav('profile')}
                   >
-                    <img
-                      src={getAvatar(userProfile.avatarSeed)}
-                      alt="User"
-                      className="w-full h-full object-cover"
-                    />
+                    <div className="text-right hidden sm:block">
+                      <p className="text-sm font-medium text-slate-900 font-body">
+                        {userProfile.name}
+                      </p>
+                      <p className="text-xs text-cyan-600 font-body">
+                        {userProfile.role}
+                      </p>
+                    </div>
+                    <div
+                      className={`w-10 h-10 rounded-full bg-slate-200 border-2 border-white overflow-hidden shadow-sm transition-all ${
+                        activeTab === 'profile' ? 'ring-2 ring-indigo-300' : ''
+                      }`}
+                    >
+                      <img
+                        src={getAvatar(userProfile.avatarSeed)}
+                        alt="User"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </header>
+              </header>
 
-            <div className="p-6">
-              <div key={activeTab} className="animate-enter">
-                {activeTab === 'home' && (
-                  <Home
-                    selectedField={selectedField}
-                    setSelectedField={setSelectedField}
-                    savedMissions={savedMissions}
-                    toggleSaveMission={toggleSaveMission}
-                    handleStartBusiness={handleStartBusiness}
-                    handleNav={handleNav}
-                    isGenerating={isGenerating}
-                    handleGenerateBlueprint={handleGenerateBlueprint}
-                    isQuizOpen={isQuizOpen}
-                    setIsQuizOpen={setIsQuizOpen}
-                    quizStep={quizStep}
-                    handleQuizAnswer={handleQuizAnswer}
-                    quizResult={quizResult}
-                    resetQuiz={resetQuiz}
-                    showDnaTooltip={showDnaTooltip}
-                    setShowDnaTooltip={setShowDnaTooltip}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                {activeTab === 'dashboard' && (
-                  <Dashboard
-                    activeBiz={activeBiz}
-                    activeBusinessId={activeBusinessId}
-                    myBusinesses={myBusinesses}
-                    setActiveBusinessId={setActiveBusinessId}
-                    handleRenameBusiness={handleRenameBusiness}
-                    handleDeleteBusiness={handleDeleteBusiness}
-                    toggleTask={toggleTask}
-                    expandedTask={expandedTask}
-                    setExpandedTask={setExpandedTask}
-                    events={events}
-                    handleNav={handleNav}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                {activeTab === 'community' && (
-                  <Community
-                    communities={communities}
-                    activeCommunityId={activeCommunityId}
-                    setActiveCommunityId={setActiveCommunityId}
-                    toggleJoinCommunity={toggleJoinCommunity}
-                    challengeSteps={challengeSteps}
-                    toggleChallengeStep={toggleChallengeStep}
-                    filteredPosts={filteredPosts}
-                    getAuthor={getAuthor}
-                    getAvatar={getAvatar}
-                    getCommunity={getCommunity}
-                    setViewingUserId={setViewingUserId}
-                    setActiveTab={setActiveTab}
-                    handleDropdownAction={handleDropdownAction}
-                    handleAddComment={handleAddComment}
-                    toggleLikePost={toggleLikePost}
-                    handleSharePost={handleSharePost}
-                    handleCreatePost={handleCreatePost}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                
-                {/* CHANGED: Passing the 3 new props down to Resources */}
-                {activeTab === 'resources' && (
-                  <Resources 
-                    addToast={addToast} 
-                    savedResources={savedResources} 
-                    toggleSaveResource={toggleSaveResource} 
-                    globalSearch={globalSearch}
-                  />
-                )}
-
-                {activeTab === 'saved' && (
-                  <Saved
-                    savedMissions={savedMissions}
-                    savedResources={savedResources}
-                    toggleSaveResource={toggleSaveResource}
-                    navigateToResource={navigateToResource}
-                    // Passing these props in case your Saved component needs to interact with missions
-                    handleStartBusiness={handleStartBusiness}
-                    setActiveTab={setActiveTab}
-                    toggleSaveMission={toggleSaveMission}
-                    expandedSavedMission={expandedSavedMission}
-                    setExpandedSavedMission={setExpandedSavedMission}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                
-                {activeTab === 'calendar' && (
-                  <Calendar
-                    currentDate={currentDate}
-                    setCurrentDate={setCurrentDate}
-                    events={events}
-                    setEvents={setEvents}
-                    isEventFormOpen={isEventFormOpen}
-                    setIsEventFormOpen={setIsEventFormOpen}
-                    editingEventId={editingEventId}
-                    setEditingEventId={setEditingEventId}
-                    newEventForm={newEventForm}
-                    setNewEventForm={setNewEventForm}
-                    handleAddEvent={handleAddEvent}
-                    handleDeleteEvent={handleDeleteEvent}
-                    startEditing={startEditing}
-                    saveEdit={saveEdit}
-                    getDaysInMonth={getDaysInMonth}
-                    handlePrevMonth={handlePrevMonth}
-                    handleNextMonth={handleNextMonth}
-                    formatLocalDate={formatLocalDate}
-                    getEventColor={getEventColor}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                {activeTab === 'profile' && (
-                  <Profile
-                    viewingUserId={viewingUserId}
-                    userProfile={userProfile}
-                    communityUsers={communityUsers}
-                    isEditingProfile={isEditingProfile}
-                    setIsEditingProfile={setIsEditingProfile}
-                    tempProfile={tempProfile}
-                    setTempProfile={setTempProfile}
-                    handleAvatarChange={handleAvatarChange}
-                    saveProfile={saveProfile}
-                    startEditingProfile={startEditingProfile}
-                    setActiveTab={setActiveTab}
-                    getAvatar={getAvatar}
-                    myBusinesses={myBusinesses}
-                    isChallengeComplete={isChallengeComplete}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                {activeTab === 'mentors' && (
-                  <Mentors
-                    mentors={mentors}
-                    expandedMentorId={expandedMentorId}
-                    setExpandedMentorId={setExpandedMentorId}
-                    openBookingModal={openBookingModal}               
-                    accessibility={accessibility}
-                    globalSearch={globalSearch}
-                  />
-                )}
-                {activeTab === 'settings' && (
-                  <Settings 
-                    accessibility={accessibility} 
-                    setAccessibility={setAccessibility} 
-                    addToast={addToast}
-                    onReset={resetApp} 
-                    globalSearch={globalSearch}
-                  />
-                )}
-                {activeTab === 'about' && (
-                  <About 
-                    globalSearch={globalSearch}
-                  />
-                )}
-              </div>
-            </div>
-          </main>
-          {/* MOBILE BOTTOM NAVIGATION BAR */}
-          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 flex items-center gap-2 overflow-x-auto hide-scroll px-4 py-2 z-40 snap-x snap-mandatory shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe">
-            
-            {[
-              { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-              { id: 'home', icon: Rocket, label: 'Browse' },
-              { id: 'saved', icon: Bookmark, label: 'Saved' },
-              { id: 'community', icon: Users, label: 'Community' },
-              { id: 'resources', icon: BookOpen, label: 'Resources' },
-              { id: 'calendar', icon: CalendarIcon, label: 'Calendar' },
-              { id: 'mentors', icon: Briefcase, label: 'Mentors' },
-              { id: 'settings', icon: SettingsIcon, label: 'Settings' },
-              { id: 'profile', icon: User, label: 'Profile' },
-            ].map((tab) => {
-              const isActive = activeTab === tab.id;
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleNav(tab.id === 'profile' ? 'profile' : tab.id)}
-                  className={`flex flex-col items-center justify-center flex-shrink-0 snap-center min-w-[4.5rem] py-2 px-1 rounded-xl transition-all duration-300 ${
-                    isActive 
-                      ? 'text-indigo-600 bg-indigo-50/80 shadow-sm border border-indigo-100/50' 
-                      : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
-                  }`}
-                >
-                  <Icon size={22} className={`${isActive ? 'mb-1 scale-110' : 'mb-1 opacity-80'} transition-transform`} />
+              <div className="p-6">
+                <div key={activeTab} className="animate-enter">
+                  {activeTab === 'home' && (
+                    <Home
+                      selectedField={selectedField}
+                      setSelectedField={setSelectedField}
+                      savedMissions={savedMissions}
+                      toggleSaveMission={toggleSaveMission}
+                      handleStartBusiness={handleStartBusiness}
+                      handleNav={handleNav}
+                      isGenerating={isGenerating}
+                      handleGenerateBlueprint={handleGenerateBlueprint}
+                      isQuizOpen={isQuizOpen}
+                      setIsQuizOpen={setIsQuizOpen}
+                      quizStep={quizStep}
+                      handleQuizAnswer={handleQuizAnswer}
+                      quizResult={quizResult}
+                      resetQuiz={resetQuiz}
+                      showDnaTooltip={showDnaTooltip}
+                      setShowDnaTooltip={setShowDnaTooltip}
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  {activeTab === 'dashboard' && (
+                    <Dashboard
+                      activeBiz={activeBiz}
+                      activeBusinessId={activeBusinessId}
+                      myBusinesses={myBusinesses}
+                      setActiveBusinessId={setActiveBusinessId}
+                      handleRenameBusiness={handleRenameBusiness}
+                      handleDeleteBusiness={handleDeleteBusiness}
+                      toggleTask={toggleTask}
+                      expandedTask={expandedTask}
+                      setExpandedTask={setExpandedTask}
+                      events={events}
+                      handleNav={handleNav}
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  {activeTab === 'community' && (
+                    <Community
+                      communities={communities}
+                      activeCommunityId={activeCommunityId}
+                      setActiveCommunityId={setActiveCommunityId}
+                      toggleJoinCommunity={toggleJoinCommunity}
+                      challengeSteps={challengeSteps}
+                      toggleChallengeStep={toggleChallengeStep}
+                      filteredPosts={filteredPosts}
+                      getAuthor={getAuthor}
+                      getAvatar={getAvatar}
+                      getCommunity={getCommunity}
+                      setViewingUserId={setViewingUserId}
+                      setActiveTab={setActiveTab}
+                      handleDropdownAction={handleDropdownAction}
+                      handleAddComment={handleAddComment}
+                      toggleLikePost={toggleLikePost}
+                      handleSharePost={handleSharePost}
+                      handleCreatePost={handleCreatePost}
+                      globalSearch={globalSearch}
+                    />
+                  )}
                   
-                  {/* Text only expands and appears when the tab is active to save space */}
-                  <span className={`text-[10px] font-bold font-body tracking-wide transition-all duration-300 ${
-                    isActive ? 'opacity-100 h-auto' : 'opacity-0 h-0 overflow-hidden'
-                  }`}>
-                    {tab.label}
-                  </span>
-                </button>
-              );
-            })}
+                  {activeTab === 'resources' && (
+                    <Resources 
+                      addToast={addToast} 
+                      savedResources={savedResources} 
+                      toggleSaveResource={toggleSaveResource} 
+                      globalSearch={globalSearch}
+                    />
+                  )}
+
+                  {activeTab === 'saved' && (
+                    <Saved
+                      savedMissions={savedMissions}
+                      savedResources={savedResources}
+                      toggleSaveResource={toggleSaveResource}
+                      navigateToResource={navigateToResource}
+                      handleStartBusiness={handleStartBusiness}
+                      setActiveTab={setActiveTab}
+                      toggleSaveMission={toggleSaveMission}
+                      expandedSavedMission={expandedSavedMission}
+                      setExpandedSavedMission={setExpandedSavedMission}
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  
+                  {activeTab === 'calendar' && (
+                    <Calendar
+                      currentDate={currentDate}
+                      setCurrentDate={setCurrentDate}
+                      events={events}
+                      setEvents={setEvents}
+                      isEventFormOpen={isEventFormOpen}
+                      setIsEventFormOpen={setIsEventFormOpen}
+                      editingEventId={editingEventId}
+                      setEditingEventId={setEditingEventId}
+                      newEventForm={newEventForm}
+                      setNewEventForm={setNewEventForm}
+                      handleAddEvent={handleAddEvent}
+                      handleDeleteEvent={handleDeleteEvent}
+                      startEditing={startEditing}
+                      saveEdit={saveEdit}
+                      getDaysInMonth={getDaysInMonth}
+                      handlePrevMonth={handlePrevMonth}
+                      handleNextMonth={handleNextMonth}
+                      formatLocalDate={formatLocalDate}
+                      getEventColor={getEventColor}
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  {activeTab === 'profile' && (
+                    <Profile
+                      viewingUserId={viewingUserId}
+                      userProfile={userProfile}
+                      communityUsers={communityUsers}
+                      isEditingProfile={isEditingProfile}
+                      setIsEditingProfile={setIsEditingProfile}
+                      tempProfile={tempProfile}
+                      setTempProfile={setTempProfile}
+                      handleAvatarChange={handleAvatarChange}
+                      saveProfile={saveProfile}
+                      startEditingProfile={startEditingProfile}
+                      setActiveTab={setActiveTab}
+                      getAvatar={getAvatar}
+                      myBusinesses={myBusinesses}
+                      isChallengeComplete={isChallengeComplete}
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  {activeTab === 'mentors' && (
+                    <Mentors
+                      mentors={mentors}
+                      expandedMentorId={expandedMentorId}
+                      setExpandedMentorId={setExpandedMentorId}
+                      openBookingModal={openBookingModal}               
+                      accessibility={accessibility}
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  {activeTab === 'settings' && (
+                    <Settings 
+                      accessibility={accessibility} 
+                      setAccessibility={setAccessibility} 
+                      addToast={addToast}
+                      onReset={resetApp} 
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                  {activeTab === 'about' && (
+                    <About 
+                      globalSearch={globalSearch}
+                    />
+                  )}
+                </div>
+              </div>
+            </main>
+
+            {/* MOBILE BOTTOM NAVIGATION BAR */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/50 flex items-center gap-2 overflow-x-auto hide-scroll px-4 py-2 z-40 snap-x snap-mandatory shadow-[0_-10px_40px_rgba(0,0,0,0.05)] pb-safe">
+              {[
+                { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+                { id: 'home', icon: Rocket, label: 'Browse' },
+                { id: 'saved', icon: Bookmark, label: 'Saved' },
+                { id: 'community', icon: Users, label: 'Community' },
+                { id: 'resources', icon: BookOpen, label: 'Resources' },
+                { id: 'calendar', icon: CalendarIcon, label: 'Calendar' },
+                { id: 'mentors', icon: Briefcase, label: 'Mentors' },
+                { id: 'settings', icon: SettingsIcon, label: 'Settings' },
+                { id: 'profile', icon: User, label: 'Profile' },
+              ].map((tab) => {
+                const isActive = activeTab === tab.id;
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => handleNav(tab.id === 'profile' ? 'profile' : tab.id)}
+                    className={`flex flex-col items-center justify-center flex-shrink-0 snap-center min-w-[4.5rem] py-2 px-1 rounded-xl transition-all duration-300 ${
+                      isActive 
+                        ? 'text-indigo-600 bg-indigo-50/80 shadow-sm border border-indigo-100/50' 
+                        : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Icon size={22} className={`${isActive ? 'mb-1 scale-110' : 'mb-1 opacity-80'} transition-transform`} />
+                    <span className={`text-[10px] font-bold font-body tracking-wide transition-all duration-300 ${
+                      isActive ? 'opacity-100 h-auto' : 'opacity-0 h-0 overflow-hidden'
+                    }`}>
+                      {tab.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
+          {/* --- LAYER 2: THE LANDING PAGE (Sits on top, crossfades out smoothly) --- */}
+          <div 
+            className={`absolute inset-0 w-full h-full transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] bg-[#FDFCF6] ${
+              hasEnteredApp ? 'opacity-0 scale-[1.02] pointer-events-none -z-10' : 'opacity-100 pointer-events-auto z-50'
+            }`}
+          >
+            <LandingPage onEnter={() => setHasEnteredApp(true)} />
+          </div>
+
+          {/* --- MODALS (Sit above everything) --- */}
           {isBookingModalOpen && selectedMentorForBooking && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in zoom-in">
               <div className="bg-white/90 backdrop-blur-xl rounded-2xl w-full max-w-lg shadow-2xl p-6 relative border border-white/50">
@@ -1514,8 +1523,7 @@ export default function AccelerateApp() {
               </div>
             </div>
           )}
-        </>
-      )}
-    </div>
-  );
-}
+        </div>
+      );
+    }
+      
