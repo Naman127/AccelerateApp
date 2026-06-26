@@ -1,4 +1,3 @@
-import { SpeedInsights } from "@vercel/speed-insights/next"
 import React, { useState, startTransition } from 'react';
 import { Settings } from './pages/Settings';
 import {
