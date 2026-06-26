@@ -55,15 +55,15 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                     </div>
                     <button 
                       onClick={() => toggleSetting('highContrast')}
-                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         accessibility.highContrast 
-                          ? (accessibility.darkMode ? 'bg-amber-400 border-amber-400' : 'bg-purple-600 border-purple-600') 
-                          : (accessibility.darkMode ? 'bg-white border-white' : 'bg-black border-black')
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-slate-200/80 border-slate-300 dark:bg-slate-800 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500'
                       }`}
                     >
-                      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.highContrast ? 'translate-x-5' : 'translate-x-0'
-                      } ${accessibility.darkMode ? 'bg-slate-900' : 'bg-white'}`} />
+                      <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out mt-[2px] ${
+                        accessibility.highContrast ? 'translate-x-5 bg-white' : 'translate-x-0.5 bg-white dark:bg-slate-300'
+                      }`} />
                     </button>
                   </div>
                 )}
@@ -80,15 +80,15 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                     </div>
                     <button 
                       onClick={() => toggleSetting('reduceMotion')}
-                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         accessibility.reduceMotion 
-                          ? (accessibility.darkMode ? 'bg-amber-400 border-amber-400' : 'bg-purple-600 border-purple-600') 
-                          : (accessibility.darkMode ? 'bg-white border-white' : 'bg-black border-black')
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-slate-200/80 border-slate-300 dark:bg-slate-800 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500'
                       }`}
                     >
-                      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.reduceMotion ? 'translate-x-5' : 'translate-x-0'
-                      } ${accessibility.darkMode ? 'bg-slate-900' : 'bg-white'}`} />
+                      <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out mt-[2px] ${
+                        accessibility.reduceMotion ? 'translate-x-5 bg-white' : 'translate-x-0.5 bg-white dark:bg-slate-300'
+                      }`} />
                     </button>
                   </div>
                 )}
@@ -105,15 +105,15 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                     </div>
                     <button 
                       onClick={() => toggleSetting('dyslexicFont')}
-                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         accessibility.dyslexicFont 
-                          ? (accessibility.darkMode ? 'bg-amber-400 border-amber-400' : 'bg-purple-600 border-purple-600') 
-                          : (accessibility.darkMode ? 'bg-white border-white' : 'bg-black border-black')
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-slate-200/80 border-slate-300 dark:bg-slate-800 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500'
                       }`}
                     >
-                      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.dyslexicFont ? 'translate-x-5' : 'translate-x-0'
-                      } ${accessibility.darkMode ? 'bg-slate-900' : 'bg-white'}`} />
+                      <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out mt-[2px] ${
+                        accessibility.dyslexicFont ? 'translate-x-5 bg-white' : 'translate-x-0.5 bg-white dark:bg-slate-300'
+                      }`} />
                     </button>
                   </div>
                 )}
@@ -130,14 +130,14 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                     </div>
                     <button 
                       onClick={() => toggleSetting('darkMode')}
-                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
+                      className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
                         accessibility.darkMode 
-                          ? 'bg-amber-400 border-amber-400' 
-                          : 'bg-black border-black'
+                          ? 'bg-indigo-600 border-indigo-600' 
+                          : 'bg-slate-200/80 border-slate-300 dark:bg-slate-800 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-500'
                       }`}
                     >
-                      <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.darkMode ? 'translate-x-5 bg-slate-900' : 'translate-x-0 bg-white'
+                      <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full shadow ring-0 transition duration-200 ease-in-out mt-[2px] ${
+                        accessibility.darkMode ? 'translate-x-5 bg-white' : 'translate-x-0.5 bg-white dark:bg-slate-300'
                       }`} />
                     </button>
                   </div>
