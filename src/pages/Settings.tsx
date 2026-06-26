@@ -57,13 +57,13 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                       onClick={() => toggleSetting('highContrast')}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
                         accessibility.highContrast 
-                          ? 'bg-slate-900 border-slate-900 dark:bg-slate-100 dark:border-slate-100' 
-                          : 'bg-slate-200 border-slate-300 dark:bg-slate-700 dark:border-slate-600'
+                          ? (accessibility.darkMode ? 'bg-amber-400 border-amber-400' : 'bg-purple-600 border-purple-600') 
+                          : (accessibility.darkMode ? 'bg-white border-white' : 'bg-black border-black')
                       }`}
                     >
                       <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.highContrast ? 'translate-x-5 bg-white dark:bg-slate-900' : 'translate-x-0 bg-white dark:bg-slate-300'
-                      }`} />
+                        accessibility.highContrast ? 'translate-x-5' : 'translate-x-0'
+                      } ${accessibility.darkMode ? 'bg-slate-900' : 'bg-white'}`} />
                     </button>
                   </div>
                 )}
@@ -82,13 +82,13 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                       onClick={() => toggleSetting('reduceMotion')}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
                         accessibility.reduceMotion 
-                          ? 'bg-slate-900 border-slate-900 dark:bg-slate-100 dark:border-slate-100' 
-                          : 'bg-slate-200 border-slate-300 dark:bg-slate-700 dark:border-slate-600'
+                          ? (accessibility.darkMode ? 'bg-amber-400 border-amber-400' : 'bg-purple-600 border-purple-600') 
+                          : (accessibility.darkMode ? 'bg-white border-white' : 'bg-black border-black')
                       }`}
                     >
                       <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.reduceMotion ? 'translate-x-5 bg-white dark:bg-slate-900' : 'translate-x-0 bg-white dark:bg-slate-300'
-                      }`} />
+                        accessibility.reduceMotion ? 'translate-x-5' : 'translate-x-0'
+                      } ${accessibility.darkMode ? 'bg-slate-900' : 'bg-white'}`} />
                     </button>
                   </div>
                 )}
@@ -107,13 +107,13 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                       onClick={() => toggleSetting('dyslexicFont')}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
                         accessibility.dyslexicFont 
-                          ? 'bg-slate-900 border-slate-900 dark:bg-slate-100 dark:border-slate-100' 
-                          : 'bg-slate-200 border-slate-300 dark:bg-slate-700 dark:border-slate-600'
+                          ? (accessibility.darkMode ? 'bg-amber-400 border-amber-400' : 'bg-purple-600 border-purple-600') 
+                          : (accessibility.darkMode ? 'bg-white border-white' : 'bg-black border-black')
                       }`}
                     >
                       <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.dyslexicFont ? 'translate-x-5 bg-white dark:bg-slate-900' : 'translate-x-0 bg-white dark:bg-slate-300'
-                      }`} />
+                        accessibility.dyslexicFont ? 'translate-x-5' : 'translate-x-0'
+                      } ${accessibility.darkMode ? 'bg-slate-900' : 'bg-white'}`} />
                     </button>
                   </div>
                 )}
@@ -132,12 +132,12 @@ export const Settings = ({ accessibility, setAccessibility, onReset, globalSearc
                       onClick={() => toggleSetting('darkMode')}
                       className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 transition-colors duration-200 ease-in-out focus:outline-none ${
                         accessibility.darkMode 
-                          ? 'bg-slate-900 border-slate-900 dark:bg-slate-100 dark:border-slate-100' 
-                          : 'bg-slate-200 border-slate-300 dark:bg-slate-700 dark:border-slate-600'
+                          ? 'bg-amber-400 border-amber-400' 
+                          : 'bg-black border-black'
                       }`}
                     >
                       <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full shadow ring-0 transition duration-200 ease-in-out ${
-                        accessibility.darkMode ? 'translate-x-5 bg-white dark:bg-slate-900' : 'translate-x-0 bg-white dark:bg-slate-300'
+                        accessibility.darkMode ? 'translate-x-5 bg-slate-900' : 'translate-x-0 bg-white'
                       }`} />
                     </button>
                   </div>
