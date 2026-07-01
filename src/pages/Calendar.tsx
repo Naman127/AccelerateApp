@@ -8,7 +8,6 @@ export const Calendar = ({
   handleDeleteEvent, startEditing, saveEdit, getDaysInMonth, handlePrevMonth, 
   handleNextMonth, formatLocalDate, getEventColor, globalSearch 
 }) => {
-  // SAFEGUARD: Ensure currentDate is a valid Date object before pulling methods
   const safeDate = (currentDate instanceof Date && !isNaN(currentDate.getTime())) ? currentDate : new Date();
   
   const days = getDaysInMonth(safeDate.getFullYear(), safeDate.getMonth());
@@ -16,8 +15,6 @@ export const Calendar = ({
   const firstDayIndex = new Date(safeDate.getFullYear(), safeDate.getMonth(), 1).getDay();
 
   const todayStr = formatLocalDate(new Date());
-
-  // SAFEGUARD: Ensure events is always an array to prevent .filter() crashes
   const safeEvents = Array.isArray(events) ? events : [];
 
   return (

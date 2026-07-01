@@ -108,7 +108,7 @@ export const Home = ({
       {isSearchActive ? (
         <div className="max-w-6xl mx-auto animate-slide-up pb-20">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-900 font-display">Search Results</h2>
+            <h2 className="text-2xl font-bold text-slate- font-display">Search Results</h2>
             <p className="text-slate-500 font-body mt-1">Found {searchResults.length} missions matching "{globalSearch}" across all fields.</p>
           </div>
 

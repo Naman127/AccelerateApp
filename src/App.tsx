@@ -22,7 +22,6 @@ import {
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// 1. Import your UI Components
 import { Toast } from './components/Toast';
 import { Sidebar } from './components/Sidebar';
 import { Home } from './pages/Home';
@@ -136,7 +135,6 @@ export default function AccelerateApp() {
   const [expandedSavedMission, setExpandedSavedMission] = useState(null);
 
   const [events, setEvents] = useState([
-    // --- EARLY TO MID JUNE ---
     { id: 'j1', title: 'Team Sync', date: '2026-06-02', time: '10:00 AM', type: 'Meeting' },
     { id: 'j2', title: 'MVP Wireframes Due', date: '2026-06-05', time: '11:59 PM', type: 'Deadline' },
     { id: 'j3', title: 'Local Founder Mixer', date: '2026-06-08', time: '6:00 PM', type: 'Networking' },
@@ -147,16 +145,12 @@ export default function AccelerateApp() {
     { id: 'j8', title: 'FBLA Nationals Prep', date: '2026-06-22', time: '3:00 PM', type: 'Meeting' },
     { id: 'j9', title: 'Financial Modeling', date: '2026-06-25', time: '10:00 AM', type: 'Learning' },
     { id: 'j10', title: 'Beta Testing Closes', date: '2026-06-27', time: '5:00 PM', type: 'Deadline' },
-  
-    // --- NLC PRESENTATION WEEK (THE "LIVE" EVENTS) ---
     { id: 'n1', title: 'NLC Opening Session Networking', date: '2026-06-29', time: '4:00 PM', type: 'Networking' },
     { id: 'n2', title: 'Legal Q&A with Startup Lawyer', date: '2026-06-30', time: '2:00 PM', type: 'Expert Session' },
     { id: 'n3', title: 'Last-Minute Pitch Polish', date: '2026-06-30', time: '5:00 PM', type: 'Workshop' }, 
     { id: 'n4', title: 'Live Pitch Practice', date: '2026-07-01', time: '11:00 AM', type: 'Workshop' },
     { id: 'n5', title: 'Founders Lunch', date: '2026-07-01', time: '12:30 PM', type: 'Networking' }, 
     { id: 'n6', title: 'FBLA Awards Ceremony', date: '2026-07-02', time: '6:00 PM', type: 'Networking' },
-    
-    // --- POST-NLC & JULY ---
     { id: 'jl1', title: 'Post-NLC Debrief', date: '2026-07-05', time: '10:00 AM', type: 'Meeting' },
     { id: 'jl2', title: 'App Architecture', date: '2026-07-08', time: '2:00 PM', type: 'Learning' },
     { id: 'jl3', title: 'Social Media Ads', date: '2026-07-10', time: '1:00 PM', type: 'Workshop' },
@@ -204,7 +198,7 @@ export default function AccelerateApp() {
       
       if (parsedProfile.badges) {
         parsedProfile.badges = parsedProfile.badges.map(badge => {
-          let IconComponent = Medal; // Default fallback
+          let IconComponent = Medal; 
           
           if (badge.name === 'First Launch') IconComponent = Rocket;
           if (badge.name === 'Verified') IconComponent = CheckCircle2;
@@ -241,7 +235,6 @@ export default function AccelerateApp() {
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizResult, setQuizResult] = useState(null);
 
-  // --- DATA PERSISTENCE ENGINE ---
   // Syncs app state to localStorage whenever key data changes
   React.useEffect(() => {
     localStorage.setItem('acc_accessibility', JSON.stringify(accessibility));
@@ -266,7 +259,7 @@ export default function AccelerateApp() {
   const resetApp = () => {
     if (window.confirm("Are you sure? This will delete all your missions and profile data.")) {
       localStorage.clear();
-      window.location.reload(); // Refresh to reset all states to defaults
+      window.location.reload(); 
     }
   };
 
@@ -408,7 +401,7 @@ export default function AccelerateApp() {
 
     // 1. THE 11-SECOND PRESENTATION TIMER
     // This guarantees your loading animation plays for exactly 11 seconds.
-    const minWaitTime = new Promise((resolve) => setTimeout(resolve, 11000));
+    const minWaitTime = new Promise((resolve) => setTimeout(resolve, 5000));
 
     // 2. THE 4x3 FALLBACK LOGIC
     const generateFallback = () => {
