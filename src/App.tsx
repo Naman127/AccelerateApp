@@ -399,9 +399,7 @@ export default function AccelerateApp() {
 
     setIsGenerating(true);
 
-    // 1. THE 11-SECOND PRESENTATION TIMER
-    // This guarantees your loading animation plays for exactly 11 seconds.
-    const minWaitTime = new Promise((resolve) => setTimeout(resolve, 5000));
+    const minWaitTime = new Promise((resolve) => setTimeout(resolve, 9000));
 
     // 2. THE 4x3 FALLBACK LOGIC
     const generateFallback = () => {
